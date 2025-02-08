@@ -1,0 +1,31 @@
+<!doctype html>
+<html class="top">
+	<head  class="head_div" style="background-color:powderblue;">
+	    <meta charset="utf-8">
+		<div class="big-heading">
+			PillPopperPro
+		</div>
+		
+		
+	</head>
+
+	<body>
+		
+
+	    <div class="search-bar">
+			{% block search-bar %}
+			{% endblock %}
+		</div>
+
+	    {% if message %}
+	        <div class="message">
+	            {{message}}
+	        </div>
+	    {% endif %}
+
+	    <div class="content">
+		    {% block content %}
+		    {% endblock %}
+		</div>
+	</body>
+</html>

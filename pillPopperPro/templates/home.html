@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block search-bar %}
+<div>
+    <a href="{% url 'dispense' %}" id="id_dispense">
+        <button>Dispense</button>
+    </a>
+    <a href="{% url 'pill_box' %}" id="id_pill_box">
+        <button>PillBox</button>
+    </a>
+</div>
+{% endblock %}

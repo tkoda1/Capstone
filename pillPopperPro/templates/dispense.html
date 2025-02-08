@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block search-bar %}
+<div>
+    <a href="{% url 'dispense' %}" id="id_dispense">
+        <button>Dispense</button>
+    </a>
+    <a href="{% url 'pill_box' %}" id="id_pill_box">
+        <button>PillBox</button>
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+    <p id="id_page_name">Pill to Dispense: {{name_of_pill}}:</p>
+    {% load static %}
+    <img src="{% static 'pill.jpeg' %}" id="id_pill_picture" alt="W3Schools.com" />
+    <button>Dispense</button>
+{% endblock %}
