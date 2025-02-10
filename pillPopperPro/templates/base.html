@@ -2,16 +2,34 @@
 <html class="top">
 	<head  class="head_div" style="background-color:powderblue;">
 	    <meta charset="utf-8">
-		<div class="big-heading">
-			PillPopperPro
-		</div>
 		
-		
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+			
 	</head>
 
 	<body>
-		
+        <div class="navDropDown">
+            <select id="navigation-dropdown" onchange="navigateToPage()">
+                <option value="">Select an option</option>
+                <option value="{% url 'dispense' %}">Dispense</option>
+                <option value="{% url 'pill_box' %}">PillBox</option>
+            </select>
+        </div>
+    
+        <script>
+            function navigateToPage() {
+                var dropdown = document.getElementById("navigation-dropdown");
+                var selectedValue = dropdown.value;
+                if (selectedValue) {
+                    window.location.href = selectedValue;
+                }
+            }
+        </script>
+    
 
+		
 	    <div class="search-bar">
 			{% block search-bar %}
 			{% endblock %}

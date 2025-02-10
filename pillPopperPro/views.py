@@ -33,3 +33,14 @@ def pill_box(request):
     #if request.user != "":
         #return render(request, 'globalStreamPage.html', context)
     return render(request, 'pillBox.html', {})
+
+def new_pill_form(request):
+    # render takes: (1) the request,
+    #               (2) the name of the view to generate, and
+    #               (3) a dictionary of name-value pairs of data to be
+    #                   available to the view.
+    #context = {}
+    #context['status'] = "welcome to wordish :) ;)"
+    #if request.user != "":
+        #return render(request, 'globalStreamPage.html', context)
+    return render(request, 'newPillForm.html', {})

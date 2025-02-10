@@ -1,0 +1,94 @@
+/* General Page Styles */
+body {
+    background-color: #d0e6ed; /* Light Blue */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+/* Login Container */
+.container {
+    background-color: #d0e6ed; /* Light Blue */
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+h1 {
+    color: black;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+button {
+    background-color: #2c3e50; /* Dark Blue */
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    margin: 10px 0;
+    border-radius: 20px; /* Rounded Corners */
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1a252f;
+}
+
+/* Link Style (if needed) */
+a {
+    color: #2c3e50;
+    text-decoration: none;
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+
+/* Positioning the dropdown in the top-right corner */
+.navDropDown {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+/* Styling the dropdown */
+.navDropDown select {
+    background-color: #2c3e50; /* Dark Blue-Grey */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 8px; /* Smooth rounded corners */
+    cursor: pointer;
+    outline: none;
+}
+
+/* Hover effect */
+.navDropDown select:hover {
+    background-color: #1a252f; /* Slightly darker on hover */
+}
+
+/* Focus effect */
+.navDropDown select:focus {
+    background-color: #34495e; /* Subtle change when selected */
+    outline: none;
+}
+
+/* Dropdown arrow styling (optional, works in some browsers) */
+.navDropDown select::-ms-expand {
+    display: none; /* Hide default arrow in IE */
+}
+
+.navDropDown select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}

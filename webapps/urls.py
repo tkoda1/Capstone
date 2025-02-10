@@ -22,5 +22,6 @@ urlpatterns = [
     path('', views.home_page, name='home_page'), 
     path('dispense', views.dispense, name='dispense'),
     path('pill_box', views.pill_box, name='pill_box'),
+    path('new_pill_form', views.new_pill_form, name='new_pill_form'),
 
 ]
