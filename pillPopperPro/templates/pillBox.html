@@ -4,6 +4,13 @@
 
 {% block content %}
 <style>
+    .title-container {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
     .grid-container {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -46,7 +53,12 @@
     }
 </style>
 
+<div class="title-container">
+    <h1>Pill Box</h1>
+</div>
+
 <div class="grid-container">
+
     <div class="grid-item">
         <a href="{% url 'new_pill_form' %}">
             <button class="image-button">
