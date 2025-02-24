@@ -13,6 +13,9 @@ from django.contrib.auth import authenticate, login, logout
 from pillPopperPro.forms import LoginForm, RegisterForm
 
 from django.utils import timezone
+from django.shortcuts import render, redirect
+from .forms import PillForm
+from .models import Pill
   
 #@login_required
 def home_page(request):
@@ -31,8 +34,29 @@ def pill_box(request):
 
 #@login_required
 def new_pill_form(request):
-   
-    return render(request, 'newPillForm.html', {})
+    context = {}
+
+    if request.method == 'GET':
+        context['form'] = PillForm()
+        return render(request, 'newPillForm.html', context)
+
+    form = PillForm(request.POST)
+    context['form'] = form
+
+    if not form.is_valid():
+        return render(request, 'newPillForm.html', context)
+
+    # Save the pill instance to the database
+    new_pill = Pill(
+        name=form.cleaned_data['name'],
+        dosage=form.cleaned_data['dosage'],
+        disposal_time=form.cleaned_data['disposal_time'],
+        quantity_initial=form.cleaned_data['quantity_initial']
+    )
+    new_pill.save()
+
+
+    return render(request, 'newPillForm.html', context)  # Redirect to a success page
 
 #@login_required
 def account(request):
@@ -106,4 +130,6 @@ def register_action(request):
     context['name_of_user'] = form.cleaned_data['first_name'] +" " +form.cleaned_data['last_name']
 
     return render(request, 'home.html', context)
+
+
 

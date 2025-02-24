@@ -2,6 +2,11 @@ from django import forms
 from pillPopperPro.models import Pill
 
 class PillForm(forms.Form):
+    name = forms.CharField(max_length=20)
+    dosage = forms.IntegerField(min_value=1, max_value=9999)
+    disposal_time = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
+    quantity_initial = forms.IntegerField(min_value=1)
+
     class Meta:
         model = Pill
         fields = ('name', 'dosage', 'disposal_time', 'quantity_initial')
