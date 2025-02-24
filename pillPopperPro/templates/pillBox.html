@@ -51,6 +51,20 @@
     .image-button img:hover {
         transform: scale(1.1);
     }
+    .grid-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    /* Style the pill name */
+    .pill-name {
+        margin-top: 10px;  /* Adds space between the button and text */
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
 </style>
 
 <div class="title-container">
@@ -60,52 +74,58 @@
 <div class="grid-container">
 
     <div class="grid-item">
-        <a href="{% url 'new_pill_form' %}">
+        <a href="{% url 'new_pill_form' slot_id=1 %}">
             <button class="image-button">
                 {% load static %}
                 <img src="{% static 'pill.jpeg' %}" alt="Button 1">
             </button>
         </a>
+        <p class="pill-name">{{ pill_name1 }}</p>
     </div>
     <div class="grid-item">
-        <a href="{% url 'new_pill_form' %}">
+        <a href="{% url 'new_pill_form' slot_id=2 %}">
             <button class="image-button">
                 {% load static %}
                 <img src="{% static 'pill.jpeg' %}" alt="Button 2">
             </button>
         </a>
+        <p class="pill-name">{{ pill_name2 }}</p>
     </div>
     <div class="grid-item">
-        <a href="{% url 'new_pill_form' %}">
+        <a href="{% url 'new_pill_form' slot_id=3%}">
             <button class="image-button">
                 {% load static %}
                 <img src="{% static 'pill.jpeg' %}" alt="Button 3">
             </button>
         </a>
+        <p class="pill-name">{{ pill_name3 }}</p>
     </div>
     <div class="grid-item">
-        <a href="{% url 'new_pill_form' %}">
+        <a href="{% url 'new_pill_form' slot_id=4%}">
             <button class="image-button">
                 {% load static %}
                 <img src="{% static 'pill.jpeg' %}" alt="Button 4">
             </button>
         </a>
+        <p class="pill-name">{{ pill_name4 }}</p>
     </div>
     <div class="grid-item">
-        <a href="{% url 'new_pill_form' %}">
+        <a href="{% url 'new_pill_form' slot_id=5%}">
             <button class="image-button">
                 {% load static %}
                 <img src="{% static 'pill.jpeg' %}" alt="Button 5">
             </button>
         </a>
+        <p class="pill-name">{{ pill_name5 }}</p>
     </div>
     <div class="grid-item">
-        <a href="{% url 'new_pill_form' %}">
+        <a href="{% url 'new_pill_form' slot_id=6%}">
             <button class="image-button">
                 {% load static %}
                 <img src="{% static 'pill.jpeg' %}" alt="Button 6">
             </button>
         </a>
+        <p class="pill-name">{{ pill_name6 }}</p>
     </div>
 </div>
 

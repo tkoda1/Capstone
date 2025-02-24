@@ -29,12 +29,27 @@ def dispense(request):
 
 #@login_required
 def pill_box(request):
+    num_slots = 6  # Define how many slots you have
+    context = {}
+    # Retrieve all pills and organize them by slot
+    pills = Pill.objects.all()
+    pill_dict = {pill.pill_slot: pill for pill in pills}  # Dictionary mapping slot -> pill
 
-    return render(request, 'pillBox.html', {})
+    # Create a structured list ensuring all slots are filled
+    slots = []
+    for i in pill_dict:
+        slots.append(pill_dict.get(i, None))  # If no pill exists in a slot, it will be None
+        name = 'pill_name' +  str(i)
+        context[name] = pill_dict[i].name
+
+
+    return render(request, 'pillBox.html', context)
 
 #@login_required
-def new_pill_form(request):
+def new_pill_form(request, slot_id):
     context = {}
+    context['id'] = slot_id
+
 
     if request.method == 'GET':
         context['form'] = PillForm()
@@ -42,21 +57,41 @@ def new_pill_form(request):
 
     form = PillForm(request.POST)
     context['form'] = form
+    context['id'] = slot_id
+    Pill.objects.filter(pill_slot=slot_id).delete()
+
 
     if not form.is_valid():
         return render(request, 'newPillForm.html', context)
 
+
     # Save the pill instance to the database
-    new_pill = Pill(
+    new_pill = Pill.objects.create(
         name=form.cleaned_data['name'],
         dosage=form.cleaned_data['dosage'],
         disposal_time=form.cleaned_data['disposal_time'],
-        quantity_initial=form.cleaned_data['quantity_initial']
+        quantity_initial=form.cleaned_data['quantity_initial'],
+        quantity_remaining=form.cleaned_data['quantity_initial'],
+        pill_slot = context['id']
     )
     new_pill.save()
+    name = 'pill_name' +  str(context['id'])
+    context[name] = form.cleaned_data['name']
+
+    pills = Pill.objects.all()
+    pill_dict = {pill.pill_slot: pill for pill in pills}  # Dictionary mapping slot -> pill
+
+    # Create a structured list ensuring all slots are filled
+    slots = []
+    for i in pill_dict:
+        slots.append(pill_dict.get(i, None))  # If no pill exists in a slot, it will be None
+        name = 'pill_name' +  str(i)
+        context[name] = pill_dict[i]
 
 
-    return render(request, 'newPillForm.html', context)  # Redirect to a success page
+
+
+    return render(request, 'pillBox.html', context)  # Redirect to a success page
 
 #@login_required
 def account(request):

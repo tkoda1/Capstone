@@ -9,7 +9,7 @@ class PillForm(forms.Form):
 
     class Meta:
         model = Pill
-        fields = ('name', 'dosage', 'disposal_time', 'quantity_initial')
+        fields = ('name', 'dosage', 'disposal_time', 'quantity_initial','pill_slot')
 
     def clean_name(self):
         name = self.cleaned_data['name']

@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Add New Prescription</h2>
 
-    <form method="post" action="{% url 'new_pill_form' %}">
+    <form method="post" action="{% url 'new_pill_form' slot_id=id %}">
         <table class="form">
             {{ form }}
         </table>

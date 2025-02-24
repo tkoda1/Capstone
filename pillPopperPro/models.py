@@ -6,3 +6,4 @@ class Pill(models.Model):
     disposal_time = models.TimeField()
     quantity_initial = models.IntegerField()
     quantity_remaining = models.IntegerField()
+    pill_slot = models.IntegerField(default=0)
