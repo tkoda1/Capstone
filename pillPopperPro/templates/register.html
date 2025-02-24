@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+
+{% block user-info %}
+    
+{% endblock %}
+
+
+{% block content %}
+    <p id="id_page_name">Register for the PillPopperPro:</p>
+
+    <form class="form" method="post" action="{% url 'register' %}" >
+        <table class ="form">
+            {% for field in form.visible_fields %}
+                <tr>
+                    <td class ="form">{{field.label_tag}}</td>
+                    <td class ="form">{{field}}</td>
+                    <td class="errorlist">
+                        {% for error in field.errors %} {{error}} {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% csrf_token %}
+        <button type="submit" id="id_register_button" class="form">Register</button>
+
+        <a href="{% url 'login' %}" id="id_login_link">
+            <button type="submit">Login</button>
+        </a>
+        
+    </form>
+
+    {% for error in form.non_field_errors %}
+        <p class="errorlist">
+            {{ error }}
+        </p>
+    {% endfor %}
+
+{% endblock %}

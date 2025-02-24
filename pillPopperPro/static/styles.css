@@ -92,3 +92,16 @@ a {
     -moz-appearance: none;
     appearance: none;
 }
+
+
+#id_register_link,
+form {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px; /* Adds a little spacing between them */
+}
+
+/* Optional: Style the login button (if needed) */
+#id_login_button {
+  background-color: powderblue;
+}

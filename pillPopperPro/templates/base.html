@@ -30,7 +30,7 @@
         </script>
     
 
-		
+
 	    <div class="search-bar">
 			{% block search-bar %}
 			{% endblock %}
@@ -42,9 +42,17 @@
 	        </div>
 	    {% endif %}
 
+        <div class="user-info"></div>
+            {% block user-info %}
+            {% endblock %}
+        </div>
+        
 	    <div class="content">
 		    {% block content %}
 		    {% endblock %}
 		</div>
+
+       
 	</body>
+
 </html>
