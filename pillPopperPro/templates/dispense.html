@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 
-
 {% block content %}
     <p id="id_page_name">Pill to Dispense: <span id="pill_name">{{ name_of_pill }}</span></p>
     {% load static %}
     
-    <div style="display: flex; align-items: center; justify-content: center;">
-        <button id="prevButton">⬅️</button>
-        <img src="{% static 'pill.jpeg' %}" id="id_pill_picture" alt="Pill Image" style="width: 200px; height: auto; margin: 0 10px;">
-        <button id="nextButton">➡️</button>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <button id="prevButton">⬅️</button>
+            <img src="{% static 'pill.jpeg' %}" id="id_pill_picture" alt="Pill Image" style="width: 200px; height: auto; margin: 0 10px;">
+            <button id="nextButton">➡️</button>
+        </div>
+        <p id="pillLabel">{{ pill_name1 }}</p>
     </div>
     
     <button id="dispenseButton">Dispense</button>
 
     <script>
-        // List of pill images (Make sure they exist in your static folder)
         const pillImages = [
             "{% static 'pill.jpeg' %}",
             "{% static 'pill2.jpeg' %}",
@@ -24,18 +25,37 @@
             "{% static 'pill2.jpeg' %}"
         ];
 
+        const pillNames = [
+            "{{ pill_name1 }}",
+            "{{ pill_name2 }}",
+            "{{ pill_name3 }}",
+            "{{ pill_name4 }}",
+            "{{ pill_name5 }}",
+            "{{ pill_name6 }}"
+        ];
+
         let currentIndex = 0;
         const pillImageElement = document.getElementById("id_pill_picture");
+        const pillLabelElement = document.getElementById("pillLabel");
+
+        function updatePillDisplay() {
+            pillImageElement.src = pillImages[currentIndex];
+            pillLabelElement.innerText = pillNames[currentIndex];
+        }
 
         document.getElementById("prevButton").addEventListener("click", function() {
             currentIndex = (currentIndex - 1 + pillImages.length) % pillImages.length;
-            pillImageElement.src = pillImages[currentIndex];
+            updatePillDisplay();
         });
 
         document.getElementById("nextButton").addEventListener("click", function() {
             currentIndex = (currentIndex + 1) % pillImages.length;
-            pillImageElement.src = pillImages[currentIndex];
+            updatePillDisplay();
         });
+
+        
+        updatePillDisplay();
     </script>
 {% endblock %}
+
 

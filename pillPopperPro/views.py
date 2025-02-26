@@ -24,21 +24,28 @@ def home_page(request):
 
 #@login_required
 def dispense(request):
+    context = {}
+    pills = Pill.objects.all()
+    pill_dict = {pill.pill_slot: pill for pill in pills}  
 
-    return render(request, 'dispense.html', {})
+    slots = []
+    for i in pill_dict:
+        slots.append(pill_dict.get(i, None))   
+        name = 'pill_name' +  str(i)
+        context[name] = pill_dict[i].name
+
+    return render(request, 'dispense.html', context)
 
 #@login_required
 def pill_box(request):
-    num_slots = 6  # Define how many slots you have
+    num_slots = 6  
     context = {}
-    # Retrieve all pills and organize them by slot
     pills = Pill.objects.all()
-    pill_dict = {pill.pill_slot: pill for pill in pills}  # Dictionary mapping slot -> pill
+    pill_dict = {pill.pill_slot: pill for pill in pills}
 
-    # Create a structured list ensuring all slots are filled
     slots = []
     for i in pill_dict:
-        slots.append(pill_dict.get(i, None))  # If no pill exists in a slot, it will be None
+        slots.append(pill_dict.get(i, None))  
         name = 'pill_name' +  str(i)
         context[name] = pill_dict[i].name
 
@@ -81,7 +88,6 @@ def new_pill_form(request, slot_id):
     pills = Pill.objects.all()
     pill_dict = {pill.pill_slot: pill for pill in pills}  # Dictionary mapping slot -> pill
 
-    # Create a structured list ensuring all slots are filled
     slots = []
     for i in pill_dict:
         slots.append(pill_dict.get(i, None))  # If no pill exists in a slot, it will be None
