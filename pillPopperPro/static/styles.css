@@ -153,3 +153,65 @@ form {
 .submit-button:hover {
     background-color: #1a252f;
 }
+
+.title-container {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.grid-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-button {
+    width: 150px; /* Adjust as needed */
+    height: 150px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%; /* Makes the button a perfect circle */
+    overflow: hidden; /* Ensures image stays within the circular boundary */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* Ensures the image itself is circular */
+    transition: transform 0.2s ease-in-out;
+}
+
+.image-button img:hover {
+    transform: scale(1.1);
+}
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Style the pill name */
+.pill-name {
+    margin-top: 10px;  /* Adds space between the button and text */
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}

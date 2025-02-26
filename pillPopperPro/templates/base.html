@@ -15,6 +15,7 @@
                 <option value="">Select an option</option>
                 <option value="{% url 'dispense' %}">Dispense</option>
                 <option value="{% url 'pill_box' %}">PillBox</option>
+                <option value="{% url 'dashboard' %}">Dashboard</option>
                 <option value="{% url 'account' %}">Account</option>
             </select>
         </div>
@@ -46,7 +47,7 @@
             {% block user-info %}
             {% endblock %}
         </div>
-        
+
 	    <div class="content">
 		    {% block content %}
 		    {% endblock %}

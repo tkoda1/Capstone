@@ -28,13 +28,13 @@
     }
 
     .image-button {
-        width: 150px; /* Adjust as needed */
+        width: 150px; 
         height: 150px;
         border: none;
         background: none;
         cursor: pointer;
-        border-radius: 50%; /* Makes the button a perfect circle */
-        overflow: hidden; /* Ensures image stays within the circular boundary */
+        border-radius: 50%; 
+        overflow: hidden; 
         display: flex;
         align-items: center;
         justify-content: center;
@@ -44,7 +44,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 50%; /* Ensures the image itself is circular */
+        border-radius: 50%;
         transition: transform 0.2s ease-in-out;
     }
 
@@ -58,9 +58,9 @@
         text-align: center;
     }
 
-    /* Style the pill name */
+
     .pill-name {
-        margin-top: 10px;  /* Adds space between the button and text */
+        margin-top: 10px;  
         font-size: 16px;
         font-weight: bold;
         color: #333;
@@ -80,7 +80,7 @@
                 <img src="{% static 'pill.jpeg' %}" alt="Button 1">
             </button>
         </a>
-        <p class="pill-name">{{ pill_name1 }}</p>
+        <p class="pill-name"> Slot 1: {{ pill_name1 }}</p>
     </div>
     <div class="grid-item">
         <a href="{% url 'new_pill_form' slot_id=2 %}">
@@ -89,7 +89,7 @@
                 <img src="{% static 'pill.jpeg' %}" alt="Button 2">
             </button>
         </a>
-        <p class="pill-name">{{ pill_name2 }}</p>
+        <p class="pill-name">Slot2: {{ pill_name2 }}</p>
     </div>
     <div class="grid-item">
         <a href="{% url 'new_pill_form' slot_id=3%}">
@@ -98,7 +98,7 @@
                 <img src="{% static 'pill.jpeg' %}" alt="Button 3">
             </button>
         </a>
-        <p class="pill-name">{{ pill_name3 }}</p>
+        <p class="pill-name">Slot 3: {{ pill_name3 }}</p>
     </div>
     <div class="grid-item">
         <a href="{% url 'new_pill_form' slot_id=4%}">
@@ -107,7 +107,7 @@
                 <img src="{% static 'pill.jpeg' %}" alt="Button 4">
             </button>
         </a>
-        <p class="pill-name">{{ pill_name4 }}</p>
+        <p class="pill-name">Slot 4: {{ pill_name4 }}</p>
     </div>
     <div class="grid-item">
         <a href="{% url 'new_pill_form' slot_id=5%}">
@@ -116,7 +116,7 @@
                 <img src="{% static 'pill.jpeg' %}" alt="Button 5">
             </button>
         </a>
-        <p class="pill-name">{{ pill_name5 }}</p>
+        <p class="pill-name">Slot 5: {{ pill_name5 }}</p>
     </div>
     <div class="grid-item">
         <a href="{% url 'new_pill_form' slot_id=6%}">
@@ -125,7 +125,7 @@
                 <img src="{% static 'pill.jpeg' %}" alt="Button 6">
             </button>
         </a>
-        <p class="pill-name">{{ pill_name6 }}</p>
+        <p class="pill-name">Slot 6: {{ pill_name6 }}</p>
     </div>
 </div>
 
