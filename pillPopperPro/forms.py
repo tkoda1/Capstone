@@ -1,5 +1,8 @@
 from django import forms
 from pillPopperPro.models import Pill
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+
 
 class PillForm(forms.Form):
     name = forms.CharField(max_length=20)
@@ -56,11 +59,8 @@ class RegisterForm(forms.Form):
     confirm_password  = forms.CharField(max_length=200,
                                  label='Confirm password',  
                                  widget=forms.PasswordInput())
-
-    
     email      = forms.CharField(max_length=50,
                                  widget = forms.EmailInput())
-    
     first_name = forms.CharField(max_length=20)
     last_name  = forms.CharField(max_length=20)
 

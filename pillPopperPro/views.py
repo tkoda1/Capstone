@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-
+from django.http import HttpResponse, Http404
 
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -16,6 +16,7 @@ from django.utils import timezone
 from django.shortcuts import render, redirect
 from .forms import PillForm
 from .models import Pill
+import json
   
 
 #@login_required
@@ -178,3 +179,19 @@ def register_action(request):
 def dashboard(request):
     return render(request, 'pillDashboard.html', {})
 
+def get_pills(request):
+    pills = []
+    for p in Pill.objects.all().order_by('pill_slot'):
+        pill = {
+            'name': p.name,
+            'dosage': p.dosage,
+            'disposal_time': p.disposal_time.isoformat(),
+            'quantity_initial': p.quantity_initial,
+            'quantity_remaining': p.quantity_remaining,
+            'pill_slot': p.pill_slot,
+            'taken_today': p.taken_today
+        }
+        pills.append(pill)
+    response_data = {'pills': pills}
+    response_json = json.dumps(response_data)
+    return HttpResponse(response_json, content_type='application/json')

@@ -2,11 +2,9 @@
 <html class="top">
 	<head  class="head_div" style="background-color:powderblue;">
 	    <meta charset="utf-8">
-		
         {% load static %}
-        <link rel="stylesheet" href="{% static 'styles.css' %}">
-
-			
+		    <script src="{% static 'pillPopperPro.js' %}" type="text/javascript"></script>
+            <link rel="stylesheet" href="{% static 'styles.css' %}">
 	</head>
 
 	<body>
@@ -28,6 +26,8 @@
                     window.location.href = selectedValue;
                 }
             }
+            window.onload = pill_schedule;
+            window.setInterval(pill_schedule, 60000);
         </script>
     
 
