@@ -2,10 +2,10 @@ function displayError(message) {
     console.log(message)
 }
 
-function updatePage(xhr) {
+function updatePage(f, xhr) {
     if (xhr.status === 200) {
         let response = JSON.parse(xhr.responseText)
-        update_pill_schedule(response)
+        f(response)
         return
     }
 
@@ -34,7 +34,19 @@ function pill_schedule() {
     let xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
         if (this.readyState !== 4) return
-        updatePage(xhr)
+        updatePage(update_pill_schedule, xhr)
+    }
+
+    xhr.open("GET", "/pillPopperPro/get-pills", true)
+    xhr.send()
+}
+
+// Alerts users to refill medication at the scheduled time
+function pill_refills() {
+    let xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function() {
+        if (this.readyState !== 4) return
+        updatePage(update_pill_refills, xhr)
     }
 
     xhr.open("GET", "/pillPopperPro/get-pills", true)
@@ -64,13 +76,47 @@ function update_pill_schedule(items) {
 
     // return if no pills remaining to take
     if (message == "") {
-        return
+        console.log('No pills to take');
+        return;
     }
-
+    console.log('Pills to take');
     // alert users of which pills to take
     message = "Hello! You are scheduled to take the following medications:" + 
             message + '\nPlease press OK to dispense medication.';
     // confirm(message); COMMENTED OUT FOR TESTING PURPOSES
 
     // navigate to dispesning page from here
+}
+
+function update_pill_refills(items) {
+    if (items['pills'].length == 0) {
+        return
+    }
+    let need_refills = [];
+    let upcoming_refills = [];
+    let refill_threshold = 10;
+    items['pills'].forEach(item => {
+        console.log(item);
+        if (item['quantity_remaining'] == 0) {
+            need_refills.push(item['name'])
+            console.log('here')
+        }
+        else if (item['quantity_remaining'] < refill_threshold) {
+            upcoming_refills.push(item['name'])
+            console.log('here')
+        }
+    })
+
+    message = ""
+    if (need_refills.length > 0) {
+        message = "The following medication(s) need to be filled: "
+        message = message + need_refills.join(", ") + "\n\n"
+    }
+    if (upcoming_refills.length > 0) {
+        message = message + "The following medication(s) are due for a refill: "
+        message = message + upcoming_refills.join(", ")
+    }
+    if (message.length > 0) {
+        alert(message)
+    }
 }

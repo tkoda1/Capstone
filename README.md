@@ -8,3 +8,4 @@ https://www.w3schools.com/js/js_date_methods.asp
 https://www.freecodecamp.org/news/how-to-convert-a-string-to-a-number-in-javascript/
 https://www.w3schools.com/jsref/jsref_substring.asp
 https://www.w3schools.com/jsref/met_win_confirm.asp
+https://www.geeksforgeeks.org/passing-a-function-as-a-parameter-in-javascript/

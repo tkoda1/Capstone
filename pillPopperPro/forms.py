@@ -30,7 +30,7 @@ class PillForm(forms.Form):
 
     def clean_quantity_initial(self):
         quantity_initial = self.cleaned_data['quantity_initial']
-        if quantity_initial != 30: # only accepting a 30 day supply
+        if quantity_initial > 30: # accepting a maximum of a 30 day supply
             raise forms.ValidationError('Please enter valid quantity')
         return quantity_initial
     
