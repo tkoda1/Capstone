@@ -2,17 +2,30 @@ from django import forms
 from pillPopperPro.models import Pill
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+import datetime
+
+def generate_time_choices():
+    times = []
+    start_time = datetime.datetime(2000, 1, 1, 0, 0)  # Arbitrary date to construct time objects
+    while start_time.time() < datetime.time(23, 45):  # Ensure last value is 23:45
+        times.append((start_time.time().strftime('%H:%M'), start_time.time().strftime('%I:%M %p')))
+        start_time += datetime.timedelta(minutes=15)
+    return times
 
 
 class PillForm(forms.Form):
     name = forms.CharField(max_length=20)
     dosage = forms.IntegerField(min_value=1, max_value=9999)
-    disposal_time = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
+    #disposal_time = forms.TimeField(widget=forms.TimeInput(format='%H:%M'))
     quantity_initial = forms.IntegerField(min_value=1)
+    disposal_times = forms.MultipleChoiceField(
+        choices=generate_time_choices(),  
+        widget=forms.SelectMultiple(attrs={'size': 10})  # Allows multi-selection
+    )
 
     class Meta:
         model = Pill
-        fields = ('name', 'dosage', 'disposal_time', 'quantity_initial','pill_slot')
+        fields = ('name', 'dosage', 'disposal_times', 'quantity_initial','pill_slot')
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -33,6 +46,12 @@ class PillForm(forms.Form):
         if quantity_initial > 30: # accepting a maximum of a 30 day supply
             raise forms.ValidationError('Please enter valid quantity')
         return quantity_initial
+    
+    def clean_disposal_times(self):
+        disposal_times = self.cleaned_data.get('disposal_times', [])
+        if not disposal_times:
+            raise forms.ValidationError("Please select at least one disposal time.")
+        return disposal_times  # Stores as a list of selected times
     
 
 class LoginForm(forms.Form):

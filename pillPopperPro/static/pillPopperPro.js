@@ -93,39 +93,39 @@ function pill_refills() {
 }
 
 function update_pill_schedule(items) {
-    if (items['pills'].length == 0) {
-        return
+    if (items['pills'].length === 0) {
+        return;
     }
+    
     const date = new Date();
     const curr_hour = date.getHours();
     const curr_minute = date.getMinutes();
     let message = "";
-    items['pills'].forEach(item => {
-        const scheduled_hour = parseInt(item['disposal_time'].substring(0,2));
-        const scheduled_minute = parseInt(item['disposal_time'].substring(3));
-        if ((scheduled_hour == curr_hour) && 
-                (scheduled_minute <= curr_minute) && 
-                (item['taken_today'] == 0)) {
-            message = message + "\n" + item['name'];
-        }
-        else if ((scheduled_hour < curr_hour) && (item['taken_today'] == 0)) {
-            message = message + "\n" + item['name'];
-        }
-    })
 
-    // return if no pills remaining to take
-    if (message == "") {
+    items['pills'].forEach(item => {
+        item['disposal_times'].forEach(time => {  
+            const scheduled_hour = parseInt(time.substring(0, 2));
+            const scheduled_minute = parseInt(time.substring(3));
+
+            if ((scheduled_hour === curr_hour && scheduled_minute <= curr_minute && item['taken_today'] === 0) ||
+                (scheduled_hour < curr_hour && item['taken_today'] === 0)) {
+                message += "\n" + item['name'];
+            }
+        });
+    });
+
+    if (message === "") {
         console.log('No pills to take');
         return;
     }
-    console.log('Pills to take');
-    // alert users of which pills to take
-    message = "Hello! You are scheduled to take the following medications:" + 
-            message + '\nPlease press OK to dispense medication.';
-    // confirm(message); COMMENTED OUT FOR TESTING PURPOSES
 
-    // navigate to dispesning page from here
+    console.log('Pills to take');
+    
+    message = "Hello! You are scheduled to take the following medications:" + 
+              message + '\nPlease press OK to dispense medication.';
+    // confirm(message); COMMENTED OUT FOR TESTING PURPOSES
 }
+
 
 function update_pill_refills(items) {
     if (items['pills'].length == 0) {

@@ -86,7 +86,7 @@ def new_pill_form(request, slot_id):
     new_pill = Pill.objects.create(
         name=form.cleaned_data['name'],
         dosage=form.cleaned_data['dosage'],
-        disposal_time=form.cleaned_data['disposal_time'],
+        disposal_times=form.cleaned_data['disposal_times'],
         quantity_initial=form.cleaned_data['quantity_initial'],
         quantity_remaining=form.cleaned_data['quantity_initial'],
         pill_slot = context['id']
@@ -104,8 +104,6 @@ def new_pill_form(request, slot_id):
         slots.append(pill_dict.get(i, None))  
         name = 'pill_name' +  str(i)
         context[name] = pill_dict[i]
-
-
 
 
     return render(request, 'pillBox.html', context)  # Redirect to a success page
@@ -185,7 +183,7 @@ def get_pills(request):
         pill = {
             'name': p.name,
             'dosage': p.dosage,
-            'disposal_time': p.disposal_time.isoformat(),
+            'disposal_times': p.disposal_times,
             'quantity_initial': p.quantity_initial,
             'quantity_remaining': p.quantity_remaining,
             'pill_slot': p.pill_slot,
