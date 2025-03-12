@@ -1,3 +1,34 @@
+"use strict"
+
+// let socket = null;
+
+// function connect_to_server() {
+//     let wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:"
+//     let url = `${wsProtocol}://${window.location.host}/pillPopperPro/data/`;
+//     socket = new WebSocket(url);
+
+//     socket.onerror = function(error) {
+//         displayError("WebSocket Error: " + error)
+//     }
+
+//     socket.onopen = function() {
+//         console.log('Connected to server');
+//     }
+
+//     socket.onclose = function() {
+//         console.log('Disconnected from server');
+//     }
+  
+//     socket.onmessage = function(event) {
+//         //fix
+//     }
+// }
+
+function dispense_pill(pill) {
+    let data = {slot: pill['pill_slot'], dosage: pill['dosage']}
+    socket.send(JSON.stringify(data))
+}
+
 function displayError(message) {
     console.log(message)
 }
