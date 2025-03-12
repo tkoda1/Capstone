@@ -66,7 +66,7 @@ class PillPopperProConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(
             self.group_name,
             {
-                'type': 'broadcast_evet',
+                'type': 'broadcast_event',
                 'message': json.dumps({'hello': 'world'})
             }
         )
