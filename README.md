@@ -1,6 +1,22 @@
 # Capstone
 Shared capstone project for PillPopperPro
 
+Setting up your environment: 
+```
+   python3 -m venv venv .
+   <activate the virtual environment>
+   python -m pip install -U pip
+   python -m pip install -r requirements.txt
+```
+
+Then run the demo in the usual way:
+```
+   python manage.py makemigrations
+   python manage.py migrate
+   python manage.py runserver
+```
+
+
 References & Sources:
 17437 homework 7
 17437 fall 24 team 19 project

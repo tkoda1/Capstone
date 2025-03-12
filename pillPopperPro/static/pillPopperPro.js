@@ -1,31 +1,39 @@
 "use strict"
 
-// let socket = null;
+let socket = null;
 
-// function connect_to_server() {
-//     let wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:"
-//     let url = `${wsProtocol}://${window.location.host}/pillPopperPro/data/`;
-//     socket = new WebSocket(url);
+function connect_to_server() {
+    //let wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:"
+    //let url = `${wsProtocol}://${window.location.host}/pillPopperPro/data/`;
+    let url = `ws://${window.location.host}/pillPopperPro/data/`;
+    socket = new WebSocket(url);
 
-//     socket.onerror = function(error) {
-//         displayError("WebSocket Error: " + error)
-//     }
+    socket.onerror = function(error) {
+        displayError("WebSocket Error: " + error)
+    }
 
-//     socket.onopen = function() {
-//         console.log('Connected to server');
-//     }
+    socket.onopen = function(event) {
+        console.log('Connected to server');
+    }
 
-//     socket.onclose = function() {
-//         console.log('Disconnected from server');
-//     }
+    socket.onclose = function(event) {
+        console.log('Disconnected from server');
+    }
   
-//     socket.onmessage = function(event) {
-//         //fix
-//     }
-// }
+    socket.onmessage = function(event) {
+        let response = JSON.parse(event.data);
+        console.log(response);
+        // FIX THIS
+    }
+}
 
-function dispense_pill(pill) {
-    let data = {slot: pill['pill_slot'], dosage: pill['dosage']}
+// function dispense_pill(pill)
+function dispense_pill() {
+    console.log("Called dispense_pill function")
+    // remove hardcoded data
+    let data = {action: "add", slot: "6", dosage: "1"}
+    console.log(data)
+    console.log(JSON.stringify(data))
     socket.send(JSON.stringify(data))
 }
 
@@ -138,7 +146,7 @@ function update_pill_refills(items) {
         }
     })
 
-    message = ""
+    let message = ""
     if (need_refills.length > 0) {
         message = "The following medication(s) need to be filled: "
         message = message + need_refills.join(", ") + "\n\n"
