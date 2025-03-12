@@ -13,9 +13,11 @@
         <p id="pillLabel">{{ pill_name1 }}</p>
     </div>
     
-    <button id="dispenseButton">Dispense</button>
+    <button id="dispenseButton" onclick="dispense_pill()">Dispense</button>
 
     <script>
+        window.onload = connect_to_server;
+
         const pillImages = [
             "{% static 'pill.jpeg' %}",
             "{% static 'pill2.jpeg' %}",
