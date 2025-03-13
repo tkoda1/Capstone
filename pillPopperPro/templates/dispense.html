@@ -49,7 +49,7 @@
     function updatePillDisplay() {
         pillImageElement.src = pillImages[currentIndex];
         pillLabelElement.innerText = pillNames[currentIndex];
-        pillLink.href = `/pill_information/${currentIndex}/`;  
+        pillLink.href = `/pill_information/${currentIndex + 1}/`;  
     }
 
     document.getElementById("prevButton").addEventListener("click", function() {

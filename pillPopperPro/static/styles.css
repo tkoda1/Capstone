@@ -372,3 +372,49 @@ form {
 .back-button:hover {
     background-color: #1c6ea4;
 }
+
+.homepage-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.homepage-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.homepage-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s ease-in-out;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.homepage-button:hover {
+    background: linear-gradient(135deg, #1c2833, #2c3e50);
+    transform: translateY(-2px);
+}
+
+.homepage-button:active {
+    transform: scale(0.98);
+}
