@@ -19,7 +19,7 @@ hx.reset()
 hx.tare()  # Tare weight sensor
 
 # Bluetooth Configuration
-SERVER_ADDRESS = "B8:27:EB:00:00:00"  # Replace with Raspberry Pi's Bluetooth MAC
+SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  # Replace with Raspberry Pi's Bluetooth MAC
 PORT = 1
 
 def setup_bluetooth():
