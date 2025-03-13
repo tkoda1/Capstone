@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 
 
-
 {% block content %}
 <style>
     .title-container {
         text-align: center;
-        margin-top: 20px;
+        margin-top: 80px;
         font-size: 2rem;
         font-weight: bold;
     }
@@ -69,10 +68,11 @@
 
 <div class="title-container">
     <h1>Pill Box</h1>
+    <p class="pill-name">Click to add/change Perscription</p>
 </div>
 
 <div class="grid-container">
-
+    
     <div class="grid-item">
         <a href="{% url 'new_pill_form' slot_id=1 %}">
             <button class="image-button">

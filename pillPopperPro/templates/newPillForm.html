@@ -1,18 +1,37 @@
 {% extends "base.html" %}
 
-
-
 {% block content %}
-    <h2>Add New Prescription</h2>
+<div class="form-container">
+    <h2 class="form-title">Add New Prescription</h2>
 
-    <form method="post" action="{% url 'new_pill_form' slot_id=id %}">
-        <table class="form">
-            {{ form }}
-        </table>
+    <form method="post" action="{% url 'new_pill_form' slot_id=id %}" class="styled-form">
         {% csrf_token %}
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <button type="submit" id="id_submit_button" style="background-color: #2c3e50;">Submit</button>
+        
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            {{ form.name }}
         </div>
-        {% load static %}
+
+        <div class="form-group">
+            <label for="{{ form.dosage.id_for_label }}">Dosage:</label>
+            {{ form.dosage }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.quantity_initial.id_for_label }}">Quantity Initial:</label>
+            {{ form.quantity_initial }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.disposal_times.id_for_label }}">Disposal Times:</label>
+            <div class="checkbox-container">
+                {{ form.disposal_times }}
+            </div>
+        </div>
+
+        <button type="submit" class="submit-button">Submit</button>
     </form>
+</div>
+
+{% load static %}
 {% endblock %}

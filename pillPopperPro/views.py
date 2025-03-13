@@ -103,7 +103,7 @@ def new_pill_form(request, slot_id):
     for i in pill_dict:
         slots.append(pill_dict.get(i, None))  
         name = 'pill_name' +  str(i)
-        context[name] = pill_dict[i]
+        context[name] = pill_dict[i].name
 
 
     return render(request, 'pillBox.html', context)  # Redirect to a success page
