@@ -16,6 +16,8 @@ from django.utils import timezone
 from django.shortcuts import render, redirect
 from .forms import PillForm
 from .models import Pill
+from django.shortcuts import render, get_object_or_404
+
 import json
   
 
@@ -24,25 +26,35 @@ def home_page(request):
 
     return render(request, 'home.html', {})
 
+
 #@login_required
 def dispense(request):
     context = {}
     pills = Pill.objects.all()
-    pill_dict = {pill.pill_slot: pill for pill in pills}  
+    pill_dict = {pill.pill_slot: pill for pill in pills}
 
     slots = []
-    #ranges though the 6 diffrent pill slots rendering names 
-    for i in range (7):
+    for i in range(7):
         if i in pill_dict:
-            slots.append(pill_dict.get(i, None))  
-            name = 'pill_name' +  str(i)
-            context[name] = 'slot ' + str(i) + ': ' +  pill_dict[i].name
+            slots.append(pill_dict.get(i, None))
+            name = 'pill_name' + str(i)
+            context[name] = 'slot ' + str(i) + ': ' + pill_dict[i].name
         else:
-            name = 'pill_name' +  str(i)
+            name = 'pill_name' + str(i)
             context[name] = 'slot ' + str(i) + ': empty'
 
-
     return render(request, 'dispense.html', context)
+
+
+#@login_required
+def pill_information(request, pill_slot):
+    pill = get_object_or_404(Pill, pill_slot=pill_slot)
+    
+    context = {
+        'pill': pill
+    }
+    return render(request, 'PillInformation.html', context)
+
 
 #@login_required
 def pill_box(request):

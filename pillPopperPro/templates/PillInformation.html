@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="pill-info-container">
+    <h2 class="page-title">Pill Information</h2>
+    
+    {% if pill %}
+        <p class="pill-detail"><strong>Name:</strong> {{ pill.name }}</p>
+        <p class="pill-detail"><strong>Dosage:</strong> {{ pill.dosage }} mg</p>
+        <p class="pill-detail"><strong>Quantity Initial:</strong> {{ pill.quantity_initial }}</p>
+        <p class="pill-detail"><strong>Quantity Remaining:</strong> {{ pill.quantity_remaining }}</p>
+        <p class="pill-detail"><strong>Times to Take:</strong> {{ pill.disposal_times|join:", " }}</p>
+        <p class="pill-detail"><strong>Pill Slot:</strong> {{ pill.pill_slot }}</p>
+        <p class="pill-detail"><strong>Taken Today:</strong> {{ pill.taken_today }}</p>
+    {% else %}
+        <p class="no-pill">No pill information available for this slot.</p>
+    {% endif %}
+
+    <a href="{% url 'dispense' %}" class="back-button">Back to Dispensing</a>
+</div>
+{% endblock %}

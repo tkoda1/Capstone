@@ -28,5 +28,6 @@ urlpatterns = [
     path('login', views.login_action, name='login'),
     path('register', views.register_action, name='register'),
     path('dashboard', views.dashboard, name='dashboard'),
-    path('pillPopperPro/get-pills', views.get_pills)
+    path('pillPopperPro/get-pills', views.get_pills),
+    path('pill_information/<int:pill_slot>/', views.pill_information, name='pill_information'),
 ]

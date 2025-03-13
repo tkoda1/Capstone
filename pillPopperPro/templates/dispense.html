@@ -9,7 +9,9 @@
 
     <div class="pill-display">
         <button id="prevButton" class="nav-button">⬅</button>
-        <img src="{% static 'pill.jpeg' %}" id="id_pill_picture" alt="Pill Image" class="pill-image">
+        <a id="pillLink" href="#">
+            <img src="{% static 'pill.jpeg' %}" id="id_pill_picture" alt="Pill Image" class="pill-image">
+        </a>
         <button id="nextButton" class="nav-button">➡</button>
     </div>
 
@@ -42,10 +44,12 @@
     let currentIndex = 0;
     const pillImageElement = document.getElementById("id_pill_picture");
     const pillLabelElement = document.getElementById("pillLabel");
+    const pillLink = document.getElementById("pillLink");
 
     function updatePillDisplay() {
         pillImageElement.src = pillImages[currentIndex];
         pillLabelElement.innerText = pillNames[currentIndex];
+        pillLink.href = `/pill_information/${currentIndex}/`;  
     }
 
     document.getElementById("prevButton").addEventListener("click", function() {
@@ -59,7 +63,6 @@
     });
 
     updatePillDisplay();
-    
 </script>
 
 {% endblock %}
