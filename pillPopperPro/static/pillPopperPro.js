@@ -25,6 +25,16 @@ function connect_to_server() {
         console.log(response);
         // FIX THIS
     }
+
+    // CODE THAT USES MQTT
+    // document.getElementById("dispense-btn").addEventListener("click", function() {
+    //     socket.send(JSON.stringify({ command: "DISPENSE" }));
+    // });
+    
+    // socket.onmessage = function(event) {
+    //     const data = JSON.parse(event.data);
+    //     alert(data.message);  
+    // };
 }
 
 // function dispense_pill(pill)

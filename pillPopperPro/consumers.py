@@ -2,6 +2,10 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 import json
 
+# CODE THAT USES MQTT - try to see if this works with the RPI
+# import paho.mqtt.client as mqtt
+
+
 class PillPopperProConsumer(WebsocketConsumer):
     group_name = 'pillPopperPro_group'
     channel_name = 'pillPopperPro_channel'
@@ -58,6 +62,15 @@ class PillPopperProConsumer(WebsocketConsumer):
 
         self.broadcast_data()
 
+        # CODE THAT USES MQTT
+        # if data.get("command") == "DISPENSE": # edit based on the actuals dispense comand
+            # client = mqtt.Client()
+            # client.connect("OUR_MQTT_BROKER_IP", 1883)
+            # client.publish("pill_dispenser/command", "DISPENSE")
+            # client.disconnect()
+
+            # await self.send(text_data=json.dumps({"message": "Dispensing initiated"}))
+
     def send_error(self, error_message):
         self.send(text_data=json.dumps({'error': error_message}))
 
@@ -73,3 +86,17 @@ class PillPopperProConsumer(WebsocketConsumer):
     
     def broadcast_event(self, event):
         self.send(text_data=event['message'])
+
+    # CODE THAT USES MQTT
+    # def send_dispense_status(self):
+    #     client = mqtt.Client()
+        
+    #     def on_message(client, userdata, message):
+    #         status = message.payload.decode()
+    #         if status == "DISPENSED":
+    #             self.send(text_data=json.dumps({"message": "Pill dispensed"}))
+        
+    #     client.on_message = on_message
+    #     client.connect("YOUR_MQTT_BROKER_IP", 1883)
+    #     client.subscribe("pill_dispenser/status")
+    #     client.loop_start()

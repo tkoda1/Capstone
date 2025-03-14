@@ -3,6 +3,8 @@ import time
 from adafruit_servokit import ServoKit
 import RPi.GPIO as GPIO
 from hx711 import HX711
+import paho.mqtt.client as mqtt
+
 
 # Initialize Servo Driver (PCA9685)
 kit = ServoKit(channels=16)
@@ -47,21 +49,17 @@ def dispense_pill():
     else:
         print("Error: No pill detected!")
 
-def main():
-    client_sock = setup_bluetooth()
-    
-    try:
-        while True:
-            data = client_sock.recv(1024).decode('utf-8').strip()
-            if data == "DISPENSE":
-                dispense_pill()
-                client_sock.send("PILL_DISPENSED")
-            elif data == "EXIT":
-                break
-    except KeyboardInterrupt:
-        print("Shutting down...")
-    
-    client_sock.close()
+# Meant to work with MQTT
+def on_message(client, userdata, message):
+    if message.payload.decode() == "DISPENSE":
+        dispense_pill()
+        weight = hx.get_weight()
+        
+        if weight > 0:
+            client.publish("pill_dispenser/status", "DISPENSED")
 
-if __name__ == "__main__":
-    main()
+client = mqtt.Client()
+client.on_message = on_message
+client.connect("YOUR_MQTT_BROKER_IP", 1883)
+client.subscribe("pill_dispenser/command")
+client.loop_forever()
