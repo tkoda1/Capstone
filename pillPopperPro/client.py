@@ -1,12 +1,15 @@
 # source to see if bluetooth is working: https://www.youtube.com/watch?v=8pMaR-WUc6U
+# for servo code
 
 import socket
+
 
 SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  # Replace with Raspberry Pi's Bluetooth MAC
 PORT = 1
 
 client = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
 client.connect((SERVER_ADDRESS, PORT))
+
 
 try:
     while True:

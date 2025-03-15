@@ -49,17 +49,4 @@ def dispense_pill():
     else:
         print("Error: No pill detected!")
 
-# Meant to work with MQTT
-def on_message(client, userdata, message):
-    if message.payload.decode() == "DISPENSE":
-        dispense_pill()
-        weight = hx.get_weight()
-        
-        if weight > 0:
-            client.publish("pill_dispenser/status", "DISPENSED")
 
-client = mqtt.Client()
-client.on_message = on_message
-client.connect("YOUR_MQTT_BROKER_IP", 1883)
-client.subscribe("pill_dispenser/command")
-client.loop_forever()
