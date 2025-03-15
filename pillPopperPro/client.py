@@ -15,7 +15,7 @@ try:
         data = client.recv(1024)
         if not data:
             break
-        print(f'Message: {data.decode('utf-8')}')
+        print(f"Message: {data.decode('utf-8')}")
 except OSError as e:
     pass
 
