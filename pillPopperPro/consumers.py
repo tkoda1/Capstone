@@ -29,7 +29,7 @@ class PillPopperProConsumer(WebsocketConsumer):
 
         # self.user = self.scope["user"]
 
-        self.broadcast_data()
+        self.broadcast_data({})
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -37,6 +37,7 @@ class PillPopperProConsumer(WebsocketConsumer):
         )
 
     def receive(self, **kwargs):
+        print("RECEIVING DATA")
         # can add storage information here
         if 'text_data' not in kwargs:
             self.send_error('you must send text_data')
@@ -54,13 +55,13 @@ class PillPopperProConsumer(WebsocketConsumer):
 
         action = data['action']
 
-        if action == 'add':
-            self.broadcast_data()
+        if action == 'release':
+            self.broadcast_data(data)
             return
 
         self.send_error(f'Invalid action property: "{action}"')
 
-        self.broadcast_data()
+        self.broadcast_data(data)
 
         # CODE THAT USES MQTT
         # if data.get("command") == "DISPENSE": # edit based on the actuals dispense comand
@@ -75,12 +76,13 @@ class PillPopperProConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({'error': error_message}))
 
 
-    def broadcast_data(self):
+    def broadcast_data(self, data):
+        print("BROADCASTING DATA")
         async_to_sync(self.channel_layer.group_send)(
             self.group_name,
             {
                 'type': 'broadcast_event',
-                'message': json.dumps({'hello': 'world'})
+                'message': json.dumps(data)
             }
         )
     

@@ -39,11 +39,14 @@ function connect_to_server() {
 
 // function dispense_pill(pill)
 function dispense_pill() {
-    console.log("Called dispense_pill function")
-    // remove hardcoded data
-    let data = {action: "add", slot: "6", dosage: "1"}
-    console.log(data)
-    console.log(JSON.stringify(data))
+    console.log("Called dispense_pill function");
+    const pillImageElement = document.getElementById("id_pill_picture");
+    const pillSlot = pillImageElement.alt;
+    if (!["1", "2", "3", "4", "5", "6"].includes(pillSlot)) {
+        displayError("Invalid pillImage alt text to signify pill slot")
+        return
+    }
+    let data = {action: "release", slot: pillSlot}
     socket.send(JSON.stringify(data))
 }
 

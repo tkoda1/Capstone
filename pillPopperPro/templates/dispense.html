@@ -48,6 +48,7 @@
 
     function updatePillDisplay() {
         pillImageElement.src = pillImages[currentIndex];
+        pillImageElement.alt = currentIndex+1;
         pillLabelElement.innerText = pillNames[currentIndex];
         pillLink.href = `/pill_information/${currentIndex + 1}/`;  
     }
