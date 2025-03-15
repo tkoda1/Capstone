@@ -6,7 +6,7 @@ SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  # Replace with Raspberry Pi's Bluetooth MA
 PORT = 1
 
 server = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-server.bind(SERVER_ADDRESS, PORT)
+server.bind((SERVER_ADDRESS, PORT))
 server.listen(PORT)
 
 client, addr = server.accept()
