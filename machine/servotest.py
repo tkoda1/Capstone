@@ -1,9 +1,10 @@
-import pigpio
+from gpiozero import Servo
+from time import sleep
 
-pi = pigpio.pi()
+servo = Servo(12)
 
-if not pi.connected:
-    print("Failed to connect to pigpio daemon!")
-else:
-    print("pigpio is running!")
-    pi.stop()
+while True:
+    servo.min()  
+    sleep(2)
+    servo.max() 
+    sleep(2)
