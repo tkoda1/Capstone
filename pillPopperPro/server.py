@@ -8,8 +8,8 @@ SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  # Replace with Raspberry Pi's Bluetooth MA
 PORT = 1
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(12, GPIO.OUT) 
-pwm = GPIO.PWM(12, 50)  
+GPIO.setup(18, GPIO.OUT) 
+pwm = GPIO.PWM(18, 50)  
 pwm.start(0)  
 
 
@@ -20,11 +20,11 @@ server.listen(PORT)
 client, addr = server.accept()
 
 def set_servo_position(angle):
-    duty = (angle / 18) + 2  e
-    GPIO.output(12, True)
+    duty = (angle / 18) + 2 
+    GPIO.output(18, True)
     pwm.ChangeDutyCycle(duty)
     time.sleep(1)
-    GPIO.output(12, False)
+    GPIO.output(18, False)
     pwm.ChangeDutyCycle(0)
 
 # try:
