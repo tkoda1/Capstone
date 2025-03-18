@@ -25,18 +25,38 @@
         <div class="form-group">
             <label for="{{ form.disposal_times.id_for_label }}">Disposal Times:</label>
             <div class="checkbox-container">
-                {{ form.disposal_times }}
+                <div class="scrollable-checkbox-list">
+                    {% for value, label in form.fields.disposal_times.choices %}
+                        <label class="checkbox-label" onclick="toggleSelection(this)">
+                            <input type="checkbox" name="{{ form.disposal_times.name }}" value="{{ value }}" hidden>
+                            <span class="time-label">{{ label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-
+        
+        
         <div class="form-group">
             <label for="{{ form.timezone.id_for_label }}">Time Zone:</label>
             {{ form.timezone }}
+        </div>  
+
+        <div class="form-group">
+            <button type="submit" class="submit-button-pill">Submit</button>
         </div>        
 
-        <button type="submit" class="submit-button">Submit</button>
     </form>
 </div>
+
+<script>
+    function toggleSelection(label) {
+        let checkbox = label.querySelector("input[type='checkbox']");
+        checkbox.checked = !checkbox.checked;
+        label.classList.toggle("selected", checkbox.checked);
+    }
+</script>
+
 
 {% load static %}
 {% endblock %}
