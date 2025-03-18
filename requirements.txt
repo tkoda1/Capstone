@@ -1,2 +1,6 @@
 daphne
 channels
+social-auth-app-django
+social-auth-core
+requests
+requests-oauthlib
