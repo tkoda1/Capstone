@@ -19,17 +19,20 @@ from .models import Pill
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 import json
   
 
-#@login_required
+@login_required
 def home_page(request):
-
     return render(request, 'home.html', {})
 
 
-#@login_required
+@login_required
 def dispense(request):
     context = {}
     pills = Pill.objects.all()
@@ -49,6 +52,7 @@ def dispense(request):
 
 
 #@login_required
+@login_required
 def pill_information(request, pill_slot):
     pill = get_object_or_404(Pill, pill_slot=pill_slot)
     
@@ -59,6 +63,7 @@ def pill_information(request, pill_slot):
 
 
 #@login_required
+@login_required
 def pill_box(request):
     num_slots = 6  
     context = {}
@@ -77,6 +82,7 @@ def pill_box(request):
     return render(request, 'pillBox.html', context)
 
 #@login_required
+@login_required
 def new_pill_form(request, slot_id):
     context = {}
     context['id'] = slot_id
@@ -124,15 +130,19 @@ def new_pill_form(request, slot_id):
 
 #@login_required
 
-
+@login_required
 def account(request):
     """Renders the account page."""
     return render(request, 'account.html', {})
 
+
+@login_required
 def logout_view(request):
-    """Logs out the user and redirects to login page."""
+    """Logs out the user and redirects to the login page."""
+    # Regular logout for non-OAuth users
     logout(request)
-    return redirect('login')
+    return redirect("login")
+
 
 def login_action(request):
     context = {}
@@ -196,9 +206,12 @@ def register_action(request):
 
     return render(request, 'home.html', context)
 
+
+@login_required
 def dashboard(request):
     return render(request, 'pillDashboard.html', {})
 
+@login_required
 def get_pills(request):
     pills = []
     for p in Pill.objects.all().order_by('pill_slot'):
@@ -215,3 +228,9 @@ def get_pills(request):
     response_data = {'pills': pills}
     response_json = json.dumps(response_data)
     return HttpResponse(response_json, content_type='application/json')
+
+
+
+@login_required
+def check_authentication(request):
+    return JsonResponse({"user": request.user.username, "is_authenticated": request.user.is_authenticated})

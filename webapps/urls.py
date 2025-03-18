@@ -17,9 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from pillPopperPro import views
+from django.urls import path, include
+
 
 urlpatterns = [
-    path('', views.home_page, name='home_page'), 
+    path('', views.home_page, name='root'), 
+    path('oauth/', include('social_django.urls', namespace='social')),
     path('dispense', views.dispense, name='dispense'),
     path('pill_box', views.pill_box, name='pill_box'),
     path('new_pill_form/<int:slot_id>/', views.new_pill_form, name='new_pill_form'),
@@ -31,4 +34,5 @@ urlpatterns = [
     path('pillPopperPro/get-pills', views.get_pills),
     path('logout/', views.logout_view, name='logout'),
     path('pill_information/<int:pill_slot>/', views.pill_information, name='pill_information'),
+    path("check-auth/", views.check_authentication, name="check_auth"),
 ]

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
+
 {% block content %}
 
 <div class="login-container">
@@ -32,10 +33,10 @@
 
             <div class="button-row">
                 <a href="{% url 'register' %}" class="btn-secondary">Register</a>
-                <a href="{% url 'register' %}" class="btn-google">
+                <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn-google">
                     <img src="{% static 'google.png' %}" alt="Google Logo">
                     Login with Google
-                </a>
+                </a>                
             </div>
         </form>
     </div>
