@@ -4,7 +4,7 @@ from django import forms
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from google.oauth2.credentials import Credentials
-
+import pytz
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.http import HttpResponse, Http404
@@ -186,29 +186,41 @@ def new_pill_form(request, slot_id):
 
     # 🔹 Save pill **with user association**
     new_pill = Pill.objects.create(
-        user=request.user,  # 🔹 Store the user
+        user=request.user,  
         name=form.cleaned_data['name'],
         dosage=form.cleaned_data['dosage'],
         disposal_times=form.cleaned_data['disposal_times'],
         quantity_initial=form.cleaned_data['quantity_initial'],
         quantity_remaining=form.cleaned_data['quantity_initial'],
         pill_slot=slot_id,
+        timezone=form.cleaned_data['timezone']
     )
     new_pill.save()
 
     # Add event to Google Calendar
     service = get_google_calendar_service(request)
+    print(pytz.timezone(new_pill.timezone).zone)
+    
 
     if service:
-        for time in form.cleaned_data['disposal_times']:
-            # Convert time to proper datetime
-            event_time = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(time, "%H:%M").time())
+        user_timezone = pytz.timezone(new_pill.timezone)  # Ensure user-entered timezone is correct
 
+        for time in form.cleaned_data['disposal_times']:
+            # Convert the disposal time to a timezone-aware datetime
+            naive_event_time = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(time, "%H:%M").time())
+
+            # Convert naive datetime to user's timezone
+            event_time = user_timezone.localize(naive_event_time)
+
+            print(f"Event Time (localized to user timezone): {event_time}")
+
+            
+            
             event = {
                 'summary': f"Take {new_pill.name}",
                 'description': f"Dosage: {new_pill.dosage} mg",
-                'start': {'dateTime': event_time.isoformat(), 'timeZone': 'UTC'},
-                'end': {'dateTime': (event_time + datetime.timedelta(minutes=30)).isoformat(), 'timeZone': 'UTC'},
+                'start': {'dateTime': event_time.isoformat(), 'timeZone': pytz.timezone(new_pill.timezone).zone},
+                'end': {'dateTime': (event_time + datetime.timedelta(minutes=30)).isoformat(), 'timeZone': pytz.timezone(new_pill.timezone).zone},
                 'recurrence': ['RRULE:FREQ=DAILY'],
             }
 

@@ -2,15 +2,24 @@ from django import forms
 from pillPopperPro.models import Pill
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from pytz import all_timezones
+
 import datetime
 
 def generate_time_choices():
     times = []
-    start_time = datetime.datetime(2000, 1, 1, 0, 0)  # Arbitrary date to construct time objects
-    while start_time.time() < datetime.time(23, 45):  # Ensure last value is 23:45
+    start_time = datetime.datetime(2000, 1, 1, 0, 0)  
+    while start_time.time() < datetime.time(23, 45): 
         times.append((start_time.time().strftime('%H:%M'), start_time.time().strftime('%I:%M %p')))
         start_time += datetime.timedelta(minutes=15)
     return times
+
+COMMON_TIMEZONES = [
+    'UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
+    'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Europe/Rome',
+    'Asia/Tokyo', 'Asia/Shanghai', 'Asia/Hong_Kong', 'Asia/Singapore',
+    'Australia/Sydney', 'Australia/Melbourne'
+]
 
 
 class PillForm(forms.Form):
@@ -20,7 +29,12 @@ class PillForm(forms.Form):
     quantity_initial = forms.IntegerField(min_value=1)
     disposal_times = forms.MultipleChoiceField(
         choices=generate_time_choices(),  
-        widget=forms.SelectMultiple(attrs={'size': 10})  # Allows multi-selection
+        widget=forms.SelectMultiple(attrs={'size': 10})  
+    )
+
+    timezone = forms.ChoiceField(
+        choices=[(tz, tz.replace('_', ' ')) for tz in COMMON_TIMEZONES], 
+        widget=forms.Select(attrs={'class': 'timezone-dropdown'})
     )
 
     class Meta:
