@@ -418,3 +418,164 @@ form {
 .homepage-button:active {
     transform: scale(0.98);
 }
+
+/* General Page Styling */
+body {
+    background-color: #dbe7eb;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Centered Login Container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Login Box */
+.login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    text-align: center;
+}
+
+/* Heading */
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Input Group Styling */
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+input:focus {
+    border-color: #2c3e50;
+}
+
+/* Buttons */
+.btn-primary {
+    width: 100%;
+    background-color: #2c3e50;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #1e2b38;
+}
+
+/* Register Link */
+.register-text {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.register-link {
+    color: #2c3e50;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.register-link:hover {
+    color: #1e2b38;
+}
+
+/* Error Messages */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Ensure buttons are on the same horizontal line */
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Both buttons take equal space */
+.btn-secondary, .btn-google {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Register Button */
+.btn-secondary {
+    background-color: #ffffff;
+    color: #2c3e50;
+    transition: background 0.3s;
+    border: 1px solid #ccc;
+
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}
+
+/* Google Login Button */
+.btn-google {
+    background-color: white;
+    color: #555;
+    border: 1px solid #ccc;
+    transition: background 0.3s, border 0.3s;
+}
+
+.btn-google img {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+.btn-google:hover {
+    background-color: #f0f0f0;
+    border-color: #bbb;
+}

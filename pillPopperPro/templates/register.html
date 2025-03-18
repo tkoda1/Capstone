@@ -24,10 +24,6 @@
         {% csrf_token %}
         <button type="submit" id="id_register_button" class="form">Register</button>
 
-        <a href="{% url 'login' %}" id="id_login_link">
-            <button type="submit">Login</button>
-        </a>
-        
     </form>
 
     {% for error in form.non_field_errors %}

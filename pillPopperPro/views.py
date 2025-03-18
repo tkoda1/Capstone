@@ -17,6 +17,8 @@ from django.shortcuts import render, redirect
 from .forms import PillForm
 from .models import Pill
 from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect
+from django.contrib.auth import logout
 
 import json
   
@@ -121,8 +123,16 @@ def new_pill_form(request, slot_id):
     return render(request, 'pillBox.html', context)  # Redirect to a success page
 
 #@login_required
+
+
 def account(request):
+    """Renders the account page."""
     return render(request, 'account.html', {})
+
+def logout_view(request):
+    """Logs out the user and redirects to login page."""
+    logout(request)
+    return redirect('login')
 
 def login_action(request):
     context = {}
