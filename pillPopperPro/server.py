@@ -2,7 +2,7 @@
 
 import socket
 
-SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  # Replace with Raspberry Pi's Bluetooth MAC
+SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  
 PORT = 1
 
  

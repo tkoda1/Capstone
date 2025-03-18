@@ -1,67 +1,42 @@
 import cadquery as cq
-import math  
 
-# Parameters
-compartment_diameter = 50  # Diameter of each compartment in mm
-compartment_height = 40    # Increased height for better pill storage
-hole_diameter = 10         # Increased for better pill flow
-wall_thickness = 3         # Thickness of walls in mm
-cutout_diameter = 12       # Diameter of manual cutout guides in mm
-servo_mount_height = 10    # Height for servo attachment
-tray_extension_length = 20 # Length of dispensing tray extension
 
-# Create base plate
-base = cq.Workplane("XY").circle((compartment_diameter * 3) / 2).extrude(wall_thickness)
+width = 2 
+cyl_radius = 25  
+cyl_height = 60  
+cone_top_radius = 25  
+cone_bottom_radius = 8  # small= 5.5, medium = 7
+cone_height = 40  
 
-# Create compartments with an open-top design for easy refilling
-for i in range(6):
-    angle = (360 / 6) * i
-    x_offset = (compartment_diameter / 2) * math.cos(math.radians(angle))
-    y_offset = (compartment_diameter / 2) * math.sin(math.radians(angle))
-    
-    compartment = (
-        cq.Workplane("XY")
-        .moveTo(x_offset, y_offset)
-        .circle(compartment_diameter / 2)
-        .extrude(compartment_height)
-    )
-    base = base.union(compartment)
+outer_cyl = cq.Workplane("XY").circle(cyl_radius).extrude(cyl_height)
 
-# Create larger dispensing holes directly in base to prevent pill jamming
-for i in range(6):
-    angle = (360 / 6) * i
-    x_offset = (compartment_diameter / 2) * math.cos(math.radians(angle))
-    y_offset = (compartment_diameter / 2) * math.sin(math.radians(angle))
-    
-    base = base.faces("<Z").workplane().moveTo(x_offset, y_offset).circle(hole_diameter / 2).cutThruAll()
+inner_cyl = cq.Workplane("XY").circle(cyl_radius - width).extrude(cyl_height)
 
-# Create servo mounting slots to act as a gate for controlled dispensing
-for i in range(6):
-    angle = (360 / 6) * i
-    x_offset = (compartment_diameter / 2) * math.cos(math.radians(angle))
-    y_offset = (compartment_diameter / 2) * math.sin(math.radians(angle))
-    
-    servo_mount = (
-        cq.Workplane("XY")
-        .moveTo(x_offset, y_offset - (compartment_diameter / 3))
-        .rect(15, servo_mount_height)
-        .extrude(wall_thickness)
-    )
-    base = base.union(servo_mount)
+cylinder = outer_cyl.cut(inner_cyl)
 
-# Add dispensing tray extensions to guide pills into the collection tray
-for i in range(6):
-    angle = (360 / 6) * i
-    x_offset = (compartment_diameter / 2) * math.cos(math.radians(angle))
-    y_offset = (compartment_diameter / 2) * math.sin(math.radians(angle))
-    
-    tray_extension = (
-        cq.Workplane("XY")
-        .moveTo(x_offset, y_offset + (compartment_diameter / 2))
-        .rect(tray_extension_length, wall_thickness)
-        .extrude(wall_thickness)
-    )
-    base = base.union(tray_extension)
+outer_cone = (
+    cq.Workplane("XY")
+    .workplane(offset=-cone_height)  
+    .circle(cone_bottom_radius)
+    .workplane(offset=cone_height)
+    .circle(cone_top_radius)
+    .loft()
+)
 
-# Export as STL for 3D printing
-cq.exporters.export(base, 'pill_organizer.stl')
+inner_cone = (
+    cq.Workplane("XY")
+    .workplane(offset=-cone_height)
+    .circle(cone_bottom_radius - width)
+    .workplane(offset=cone_height)
+    .circle(cone_top_radius - width)
+    .loft()
+)
+
+truncated_cone = outer_cone.cut(inner_cone)
+
+final_shape = cylinder.union(truncated_cone)
+
+cq.exporters.export(final_shape, '3d_model.stl')  
+cq.exporters.export(final_shape, '3d_model.step')  
+
+print(cone_bottom_radius)
