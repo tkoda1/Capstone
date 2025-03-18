@@ -13,7 +13,7 @@
         <p class="pill-detail"><strong>Pill Slot:</strong> {{ pill.pill_slot }}</p>
         <p class="pill-detail"><strong>Taken Today:</strong> {{ pill.taken_today }}</p>
     {% else %}
-        <p class="no-pill">No pill information available for this slot.</p>
+        <p class="no-pill">There is no pill in this slot.</p> 
     {% endif %}
 
     <a href="{% url 'dispense' %}" class="back-button">Back to Dispensing</a>

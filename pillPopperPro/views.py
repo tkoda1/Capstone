@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django import forms
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from google.oauth2.credentials import Credentials
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -23,8 +24,91 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from django.shortcuts import render, redirect
+from google.oauth2 import credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from django.contrib.auth.decorators import login_required
+import datetime
 
 import json
+
+from django.shortcuts import redirect
+from social_django.utils import load_strategy
+from google.oauth2.credentials import Credentials
+
+
+@login_required
+def google_auth_callback(request):
+    strategy = load_strategy(request)
+    return redirect('/')
+  
+
+
+
+import os
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from configparser import ConfigParser
+from pathlib import Path
+
+
+SCOPES = ['https://www.googleapis.com/auth/calendar.events']
+
+def get_google_calendar_service(request):
+    user = request.user
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    CONFIG = ConfigParser()
+    CONFIG.read(BASE_DIR / "config.ini")
+
+    if not user.is_authenticated:
+        print("User is not authenticated")
+        return None  # User not logged in
+
+    social_auth = user.social_auth.filter(provider='google-oauth2').first()
+    if not social_auth:
+        print("No social_aut object found for user")
+        return None
+
+    extra_data = social_auth.extra_data
+    access_token = extra_data.get('access_token')
+    refresh_token = extra_data.get('refresh_token')
+
+    print(f"social Auth Data: {extra_data}")
+
+    if not access_token:
+        print("No access token found")
+        return None
+
+    creds = Credentials(
+        token=access_token,
+        refresh_token=refresh_token,
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=CONFIG.get("GoogleOAuth2", "client_id"),
+        client_secret=CONFIG.get("GoogleOAuth2", "client_secret"),
+        scopes=SCOPES,
+    )
+    if not creds.valid:
+        try:
+            print("Refreshing expired token...")
+            creds.refresh(Request())
+            print("Token refreshed successfully!")
+        except Exception as e:
+            print(f"Error refreshing token: {e}")
+            print("User must re-authenticate.")
+            return None  # Token refresh failed, user must log in again
+
+    print(f"Credentials Object: {creds}")
+    print(f"User's granted scopes: {creds.scopes}")
+
+    if not creds.scopes or 'https://www.googleapis.com/auth/calendar.events' not in creds.scopes:
+        print("Missing required Google Calendar scopes. User must log in again.")
+        return None  # Missing scopes
+
+    return build("calendar", "v3", credentials=creds)
+
   
 
 @login_required
@@ -35,7 +119,7 @@ def home_page(request):
 @login_required
 def dispense(request):
     context = {}
-    pills = Pill.objects.all()
+    pills = Pill.objects.filter(user=request.user)
     pill_dict = {pill.pill_slot: pill for pill in pills}
 
     slots = []
@@ -54,12 +138,13 @@ def dispense(request):
 #@login_required
 @login_required
 def pill_information(request, pill_slot):
-    pill = get_object_or_404(Pill, pill_slot=pill_slot)
-    
+    pill = Pill.objects.filter(user=request.user, pill_slot=pill_slot).first()  
+
     context = {
         'pill': pill
     }
     return render(request, 'PillInformation.html', context)
+
 
 
 #@login_required
@@ -67,7 +152,7 @@ def pill_information(request, pill_slot):
 def pill_box(request):
     num_slots = 6  
     context = {}
-    pills = Pill.objects.all()
+    pills = Pill.objects.filter(user=request.user)
     pill_dict = {pill.pill_slot: pill for pill in pills}
 
     slots = []
@@ -84,9 +169,7 @@ def pill_box(request):
 #@login_required
 @login_required
 def new_pill_form(request, slot_id):
-    context = {}
-    context['id'] = slot_id
-
+    context = {'id': slot_id}
 
     if request.method == 'GET':
         context['form'] = PillForm()
@@ -94,39 +177,54 @@ def new_pill_form(request, slot_id):
 
     form = PillForm(request.POST)
     context['form'] = form
-    context['id'] = slot_id
-    Pill.objects.filter(pill_slot=slot_id).delete()
 
+    # Ensure pills are deleted only for the current user in the given slot
+    Pill.objects.filter(user=request.user, pill_slot=slot_id).delete()
 
     if not form.is_valid():
         return render(request, 'newPillForm.html', context)
 
-
-    # Saving new pills id number important for logic
+    # 🔹 Save pill **with user association**
     new_pill = Pill.objects.create(
+        user=request.user,  # 🔹 Store the user
         name=form.cleaned_data['name'],
         dosage=form.cleaned_data['dosage'],
         disposal_times=form.cleaned_data['disposal_times'],
         quantity_initial=form.cleaned_data['quantity_initial'],
         quantity_remaining=form.cleaned_data['quantity_initial'],
-        pill_slot = context['id']
+        pill_slot=slot_id,
     )
     new_pill.save()
+
+    # Add event to Google Calendar
+    service = get_google_calendar_service(request)
+
+    if service:
+        for time in form.cleaned_data['disposal_times']:
+            # Convert time to proper datetime
+            event_time = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(time, "%H:%M").time())
+
+            event = {
+                'summary': f"Take {new_pill.name}",
+                'description': f"Dosage: {new_pill.dosage} mg",
+                'start': {'dateTime': event_time.isoformat(), 'timeZone': 'UTC'},
+                'end': {'dateTime': (event_time + datetime.timedelta(minutes=30)).isoformat(), 'timeZone': 'UTC'},
+                'recurrence': ['RRULE:FREQ=DAILY'],
+            }
+
+            event = service.events().insert(calendarId='primary', body=event).execute()
+
     name = 'pill_name' +  str(context['id'])
     context[name] = form.cleaned_data['name']
 
-    pills = Pill.objects.all()
-    pill_dict = {pill.pill_slot: pill for pill in pills} 
+    pills = Pill.objects.filter(user=request.user)
+    pill_dict = {pill.pill_slot: pill for pill in pills}
 
-    slots = []
-    #i dont think this may be needed repeat logic but its for pillbox rendering
     for i in pill_dict:
-        slots.append(pill_dict.get(i, None))  
-        name = 'pill_name' +  str(i)
+        name = 'pill_name' + str(i)
         context[name] = pill_dict[i].name
 
-
-    return render(request, 'pillBox.html', context)  # Redirect to a success page
+    return render(request, 'pillBox.html', context)
 
 #@login_required
 

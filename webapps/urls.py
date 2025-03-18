@@ -35,4 +35,5 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('pill_information/<int:pill_slot>/', views.pill_information, name='pill_information'),
     path("check-auth/", views.check_authentication, name="check_auth"),
+    path('oauth2callback/', views.google_auth_callback, name='google_auth_callback'),
 ]
