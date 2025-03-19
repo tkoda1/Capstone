@@ -4,7 +4,7 @@
 <div class="form-container">
     <h2 class="form-title">Add New Prescription</h2>
 
-    <form method="post" action="{% url 'new_pill_form' slot_id=id %}" class="styled-form">
+    <form method="post" action="{% url 'new_pill_form' slot_id=id %}" enctype="multipart/form-data" class="styled-form">
         {% csrf_token %}
         
         <div class="form-group">
@@ -41,6 +41,11 @@
             <label for="{{ form.timezone.id_for_label }}">Time Zone:</label>
             {{ form.timezone }}
         </div>  
+
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Upload Pill Image:</label>
+            {{ form.image }}
+        </div>
 
         <div class="form-group">
             <button type="submit" class="submit-button-pill">Submit</button>

@@ -37,9 +37,12 @@ class PillForm(forms.Form):
         widget=forms.Select(attrs={'class': 'timezone-dropdown'})
     )
 
+    image = forms.ImageField(required=False) 
+
+
     class Meta:
         model = Pill
-        fields = ('name', 'dosage', 'disposal_times', 'quantity_initial','pill_slot')
+        fields = ('name', 'dosage', 'disposal_times', 'quantity_initial', 'pill_slot', 'image')
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -65,9 +68,11 @@ class PillForm(forms.Form):
         disposal_times = self.cleaned_data.get('disposal_times', [])
         if not disposal_times:
             raise forms.ValidationError("Please select at least one disposal time.")
-        return disposal_times  # Stores as a list of selected times
+        return disposal_times  
     
 
+
+#from web app
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=20)
     password = forms.CharField(max_length=200, widget=forms.PasswordInput())

@@ -65,7 +65,7 @@ def get_google_calendar_service(request):
 
     if not user.is_authenticated:
         print("User is not authenticated")
-        return None  # User not logged in
+        return None  
 
     social_auth = user.social_auth.filter(provider='google-oauth2').first()
     if not social_auth:
@@ -98,7 +98,7 @@ def get_google_calendar_service(request):
         except Exception as e:
             print(f"Error refreshing token: {e}")
             print("User must re-authenticate.")
-            return None  # Token refresh failed, user must log in again
+            return None  
 
     print(f"Credentials Object: {creds}")
     print(f"User's granted scopes: {creds.scopes}")
@@ -122,17 +122,13 @@ def dispense(request):
     pills = Pill.objects.filter(user=request.user)
     pill_dict = {pill.pill_slot: pill for pill in pills}
 
-    slots = []
-    for i in range(7):
-        if i in pill_dict:
-            slots.append(pill_dict.get(i, None))
-            name = 'pill_name' + str(i)
-            context[name] = 'slot ' + str(i) + ': ' + pill_dict[i].name
-        else:
-            name = 'pill_name' + str(i)
-            context[name] = 'slot ' + str(i) + ': empty'
+    for i in range(1, 7):  
+        pill = pill_dict.get(i)
+        context[f'pill_name{i}'] = pill.name if pill else "Empty"
+        context[f'pill_image{i}'] = pill.image.url if pill and pill.image else "/static/pill.jpeg"
 
     return render(request, 'dispense.html', context)
+
 
 
 #@login_required
@@ -152,19 +148,19 @@ def pill_information(request, pill_slot):
 def pill_box(request):
     num_slots = 6  
     context = {}
+
     pills = Pill.objects.filter(user=request.user)
     pill_dict = {pill.pill_slot: pill for pill in pills}
 
-    slots = []
-    #ranges though the 6 diffrent pill slots rendering names 
-    for i in pill_dict:
-        slots.append(pill_dict.get(i, None))  
-        name = 'pill_name' +  str(i)
-        context[name] = pill_dict[i].name
-
-
+    for i in range(1, num_slots + 1):  
+        pill = pill_dict.get(i)
+        context[f'pill_name{i}'] = pill.name if pill else "Empty"
+        if( pill and pill.image):
+            print(pill.image.url)
+        context[f'pill_image{i}'] = pill.image.url if pill and pill.image else "/static/pill.jpeg"
 
     return render(request, 'pillBox.html', context)
+
 
 #@login_required
 @login_required
@@ -175,16 +171,19 @@ def new_pill_form(request, slot_id):
         context['form'] = PillForm()
         return render(request, 'newPillForm.html', context)
 
-    form = PillForm(request.POST)
+    form = PillForm(request.POST, request.FILES)
     context['form'] = form
 
-    # Ensure pills are deleted only for the current user in the given slot
     Pill.objects.filter(user=request.user, pill_slot=slot_id).delete()
 
     if not form.is_valid():
         return render(request, 'newPillForm.html', context)
+    
+    uploaded_image = form.cleaned_data.get('image')
+    if not uploaded_image:
+        uploaded_image = "pill.jpeg" 
 
-    # 🔹 Save pill **with user association**
+
     new_pill = Pill.objects.create(
         user=request.user,  
         name=form.cleaned_data['name'],
@@ -193,7 +192,8 @@ def new_pill_form(request, slot_id):
         quantity_initial=form.cleaned_data['quantity_initial'],
         quantity_remaining=form.cleaned_data['quantity_initial'],
         pill_slot=slot_id,
-        timezone=form.cleaned_data['timezone']
+        timezone=form.cleaned_data['timezone'],
+        image=uploaded_image
     )
     new_pill.save()
 
@@ -203,13 +203,13 @@ def new_pill_form(request, slot_id):
     
 
     if service:
-        user_timezone = pytz.timezone(new_pill.timezone)  # Ensure user-entered timezone is correct
+        user_timezone = pytz.timezone(new_pill.timezone)  
 
         for time in form.cleaned_data['disposal_times']:
-            # Convert the disposal time to a timezone-aware datetime
+            
             naive_event_time = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(time, "%H:%M").time())
 
-            # Convert naive datetime to user's timezone
+           
             event_time = user_timezone.localize(naive_event_time)
 
             print(f"Event Time (localized to user timezone): {event_time}")
@@ -226,15 +226,21 @@ def new_pill_form(request, slot_id):
 
             event = service.events().insert(calendarId='primary', body=event).execute()
 
-    name = 'pill_name' +  str(context['id'])
-    context[name] = form.cleaned_data['name']
+    #name = 'pill_name' +  str(context['id'])
+    #context[name] = form.cleaned_data['name']
+
+    num_slots = 6  
+    context = {}
 
     pills = Pill.objects.filter(user=request.user)
     pill_dict = {pill.pill_slot: pill for pill in pills}
 
-    for i in pill_dict:
-        name = 'pill_name' + str(i)
-        context[name] = pill_dict[i].name
+    for i in range(1, num_slots + 1):  
+        pill = pill_dict.get(i)
+        context[f'pill_name{i}'] = pill.name if pill else "Empty"
+        if( pill and pill.image):
+            print(pill.image.url)
+        context[f'pill_image{i}'] = pill.image.url if pill and pill.image else "/static/pill.jpeg"
 
     return render(request, 'pillBox.html', context)
 
@@ -249,7 +255,6 @@ def account(request):
 @login_required
 def logout_view(request):
     """Logs out the user and redirects to the login page."""
-    # Regular logout for non-OAuth users
     logout(request)
     return redirect("login")
 

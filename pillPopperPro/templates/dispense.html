@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
 <div class="dispense-container">
     <h2 class="page-title">Pill to Dispense</h2>
     <span id="pill_name">{{ name_of_pill }}</span>
 
-    {% load static %}
+    
 
     <div class="pill-display">
         <button id="prevButton" class="nav-button">⬅</button>
@@ -24,12 +26,12 @@
     window.onload = connect_to_server;
 
     const pillImages = [
-        "{% static 'pill.jpeg' %}",
-        "{% static 'pill2.jpeg' %}",
-        "{% static 'pill.jpeg' %}",
-        "{% static 'pill2.jpeg' %}",
-        "{% static 'pill.jpeg' %}",
-        "{% static 'pill2.jpeg' %}"
+        "{{ pill_image1 }}",
+        "{{ pill_image2 }}",
+        "{{ pill_image3 }}",
+        "{{ pill_image4 }}",
+        "{{ pill_image5 }}",
+        "{{ pill_image6 }}"
     ];
 
     const pillNames = [
@@ -48,7 +50,7 @@
 
     function updatePillDisplay() {
         pillImageElement.src = pillImages[currentIndex];
-        pillImageElement.alt = currentIndex+1;
+        pillImageElement.alt = pillNames[currentIndex];
         pillLabelElement.innerText = pillNames[currentIndex];
         pillLink.href = `/pill_information/${currentIndex + 1}/`;  
     }
@@ -67,3 +69,4 @@
 </script>
 
 {% endblock %}
+
