@@ -198,6 +198,7 @@ def dispense(request):
                 pill.quantity_remaining -= 1
                 print(pill)
                 pill.save()
+                #print(type(pill.quantity_remaining))
                 print(pill.quantity_remaining)
 
  
@@ -211,7 +212,8 @@ def dispense(request):
                 })
                 
             else:
-                return JsonResponse({"success": False, "error": "No pills remaining!"}, status=400)
+                return JsonResponse({"success": False, "no_pills": True}, status=400)
+
 
         except Pill.DoesNotExist:
             return JsonResponse({"success": False, "error": "Pill not found"}, status=404)

@@ -65,7 +65,12 @@ function dispense_pill() {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // If the response is 400 (no more pills), show popup
+            if (response.status === 400) {
+                alert("No more pills to dispense");
+                throw new Error("No pills remaining");
+            }
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
     })
