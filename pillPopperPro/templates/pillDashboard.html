@@ -1,7 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="title-container">
-    <h1>Pill Tracking Dashboard</h1>
+{% load static %}
+<link rel="stylesheet" href="{% static 'dashboard.css' %}">
+
+<div class="dashboard-container">
+    <h1 class="dashboard-title">Pill Tracking Dashboard</h1>
+
+    <div class="pill-calendar">
+        <div class="pill-calendar-header">
+            <div class="empty-cell"></div>
+            {% for day in last_7_days %}
+                <div class="day-header">{{ day }}</div>
+            {% endfor %}
+        </div>
+
+        {% for hour in hours %}
+            <div class="hour-row">
+                <div class="hour-label">{{ hour }}</div>
+                {% for day in last_7_days %}
+                    <div class="pill-slot" id="slot-{{ day }}-{{ hour }}">
+                        <!-- Pill entries will be inserted here dynamically -->
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
 </div>
+
+<script>
+    const takenTimes = JSON.parse('{{ taken_times_json|escapejs }}');
+
+    document.addEventListener("DOMContentLoaded", function () {
+        takenTimes.forEach(entry => {
+            const slotId = `slot-${entry.day}-${entry.hour}`;
+            const slotElement = document.getElementById(slotId);
+            if (slotElement) {
+                const pillBox = document.createElement("div");
+                pillBox.classList.add("pill-box");
+                pillBox.innerText = entry.name;
+                slotElement.appendChild(pillBox);
+            }
+        });
+    });
+</script>
+
 {% endblock %}
+

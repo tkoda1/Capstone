@@ -41,13 +41,37 @@ function connect_to_server() {
 function dispense_pill() {
     console.log("Called dispense_pill function");
     const pillImageElement = document.getElementById("id_pill_picture");
-    const pillSlot = pillImageElement.alt;
+    const pillSlot = pillImageElement.getAttribute("data-slot");
+
+    console.log("Pill Slot Detected:", pillSlot);  // ✅ Debugging output
+
     if (!["1", "2", "3", "4", "5", "6"].includes(pillSlot)) {
         displayError("Invalid pillImage alt text to signify pill slot")
         return
     }
     let data = {action: "release", slot: pillSlot}
     socket.send(JSON.stringify(data))
+
+    
+    const timestamp = new Date().toISOString();
+    
+    fetch("/update_taken_times/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken(), 
+        },
+        body: JSON.stringify({ slot: pillSlot, time: timestamp })
+    })
+    .then(response => response.json())
+    .then(data => console.log("Updated taken times:", data.taken_times))
+    .catch(error => console.error("Error updating taken times:", error));
+}
+
+function getCSRFToken() {
+    return document.cookie.split('; ')
+        .find(row => row.startsWith('csrftoken'))
+        ?.split('=')[1];
 }
 
 function displayError(message) {

@@ -20,6 +20,7 @@ from pillPopperPro import views
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import path
 
 
 
@@ -40,6 +41,8 @@ urlpatterns = [
     path("check-auth/", views.check_authentication, name="check_auth"),
     path('oauth2callback/', views.google_auth_callback, name='google_auth_callback'),
     path('update_timezone/', views.update_timezone, name='update_timezone'),
+    path("update_taken_times/", views.update_taken_times, name="update_taken_times"),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

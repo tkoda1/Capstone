@@ -50,10 +50,11 @@
 
     function updatePillDisplay() {
         pillImageElement.src = pillImages[currentIndex];
-        pillImageElement.alt = pillNames[currentIndex];
+        pillImageElement.setAttribute("data-slot", currentIndex + 1); 
         pillLabelElement.innerText = pillNames[currentIndex];
         pillLink.href = `/pill_information/${currentIndex + 1}/`;  
     }
+
 
     document.getElementById("prevButton").addEventListener("click", function() {
         currentIndex = (currentIndex - 1 + pillImages.length) % pillImages.length;

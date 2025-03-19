@@ -1,0 +1,79 @@
+
+.dashboard-container {
+    padding: 20px;
+    background-color: #f4f7f9;
+    min-height: 100vh;
+}
+
+
+.dashboard-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+
+.pill-calendar {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+    gap: 5px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+
+.pill-calendar-header {
+    display: contents;
+}
+
+.day-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    background: #2c3e50;
+    color: white;
+    border-radius: 5px;
+}
+
+.hour-row {
+    display: contents;
+}
+
+.hour-label {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    background: #dbe7eb;
+    border-radius: 5px;
+}
+
+.pill-slot {
+    min-height: 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 5px;
+    position: relative;
+}
+
+
+
+.hour-label {
+    text-align: center;
+    font-weight: bold;
+}
+
+
+.pill-box {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px;
+    margin: 3px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 12px;
+}

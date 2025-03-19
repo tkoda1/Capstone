@@ -30,6 +30,9 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from django.contrib.auth.decorators import login_required
 import datetime
+from django.utils.timezone import now, timedelta
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 import json
 
@@ -48,6 +51,49 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from configparser import ConfigParser
 from pathlib import Path
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+import datetime
+
+@csrf_exempt
+@login_required
+def update_taken_times(request):
+    print("hi - view was triggered")
+    
+    if request.method == "POST":
+        data = json.loads(request.body)
+        slot_id = int(data.get("slot"))
+        timestamp = data.get("time")
+        print(f"Slot: {slot_id}, Timestamp: {timestamp}")
+
+        try:
+            pill = Pill.objects.get(user=request.user, pill_slot=slot_id)
+            print(f"Found Pill: {pill}")
+
+            timestamp_dt = datetime.datetime.fromisoformat(timestamp).replace(tzinfo=pytz.UTC)
+
+            pill.taken_times.append(timestamp_dt.isoformat())
+
+            seven_days_ago = datetime.datetime.now(pytz.UTC) - datetime.timedelta(days=7)
+
+            pill.taken_times = [
+                t for t in pill.taken_times if datetime.datetime.fromisoformat(t).replace(tzinfo=pytz.UTC) >= seven_days_ago
+            ]
+
+            pill.save()
+            print(f"Updated taken times for Pill Slot {slot_id}: {pill.taken_times}")
+
+            return JsonResponse({"status": "success", "taken_times": pill.taken_times})
+        
+        except Pill.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Pill not found"}, status=404)
+
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
+
+
 
 @login_required
 def update_timezone(request):
@@ -71,8 +117,6 @@ def google_auth_callback(request):
     strategy = load_strategy(request)
     return redirect('/')
   
-
-
 
 
 
@@ -345,7 +389,35 @@ def register_action(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'pillDashboard.html', {})
+    today = now().date()
+    last_7_days = [(today - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(6, -1, -1)]
+    hours = [f"{h}:00" for h in range(24)]
+
+    user_pills = Pill.objects.filter(user=request.user)
+    
+    taken_times_data = []
+    
+    for pill in user_pills:
+        for time in pill.taken_times:
+            timestamp = datetime.datetime.fromisoformat(time)
+            day = timestamp.strftime("%Y-%m-%d")  
+            hour = timestamp.strftime("%H:00")    
+
+            taken_times_data.append({
+                "day": day,
+                "hour": hour,
+                "name": pill.name,
+                "pill_slot": pill.pill_slot
+            })
+    print(taken_times_data)
+    
+    context = {
+        "last_7_days": last_7_days,
+        "hours": hours,
+        "taken_times_json": json.dumps(taken_times_data)
+    }
+
+    return render(request, "pillDashboard.html", context)
 
 @login_required
 def get_pills(request):
