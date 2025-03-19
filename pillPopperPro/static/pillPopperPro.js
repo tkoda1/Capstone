@@ -43,23 +43,55 @@ function dispense_pill() {
     const pillImageElement = document.getElementById("id_pill_picture");
     const pillSlot = pillImageElement.getAttribute("data-slot");
 
-    console.log("Pill Slot Detected:", pillSlot); 
+    console.log("Pill Slot Detected:", pillSlot);
 
     if (!["1", "2", "3", "4", "5", "6"].includes(pillSlot)) {
-        displayError("Invalid pillImage alt text to signify pill slot")
-        return
+        displayError("Invalid pill slot");
+        return;
     }
-    let data = {action: "release", slot: pillSlot}
-    socket.send(JSON.stringify(data))
 
-    
+    let data = { action: "release", slot: pillSlot };
+    socket.send(JSON.stringify(data));
+
     const timestamp = new Date().toISOString();
+
+    fetch("/dispense/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken(),
+        },
+        body: JSON.stringify({ slot: pillSlot })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Server Response:", data);
+        if (data.success) {
+            console.log(`Updated quantity_remaining: ${data.quantity_remaining}`);
+            
+            if (data.refill_warning) {
+                alert("Warning: Only 3 pills remaining! Refill your machine soon.");
+            }
+        } else {
+            alert(data.error || "Error dispensing pill.");
+        }
+    })
+    .catch(error => console.error("Fetch error:", error));
     
+    
+    
+
+
     fetch("/update_taken_times/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": getCSRFToken(), 
+            "X-CSRFToken": getCSRFToken(),
         },
         body: JSON.stringify({ slot: pillSlot, time: timestamp })
     })
@@ -68,11 +100,18 @@ function dispense_pill() {
     .catch(error => console.error("Error updating taken times:", error));
 }
 
+
 function getCSRFToken() {
-    return document.cookie.split('; ')
-        .find(row => row.startsWith('csrftoken'))
-        ?.split('=')[1];
-}
+        let token = document.cookie.split('; ')
+            .find(row => row.startsWith('csrftoken'))
+            ?.split('=')[1];
+
+        if (!token) {
+            console.error("CSRF Token not found!");
+        }
+        return token;
+    }
+
 
 function displayError(message) {
     console.log(message)

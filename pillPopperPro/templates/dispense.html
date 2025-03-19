@@ -7,8 +7,6 @@
     <h2 class="page-title">Pill to Dispense</h2>
     <span id="pill_name">{{ name_of_pill }}</span>
 
-    
-
     <div class="pill-display">
         <button id="prevButton" class="nav-button">⬅</button>
         <a id="pillLink" href="#">
@@ -19,9 +17,14 @@
 
     <p id="pillLabel" class="pill-label">{{ pill_name1 }}</p>
 
+    <!-- CSRF Token Form -->
+    <form id="dispenseForm">
+        {% csrf_token %}
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    </form>
+
     <button id="dispenseButton" class="dispense-button" onclick="dispense_pill()">Dispense</button>
 </div>
-
 <script>
     window.onload = connect_to_server;
 

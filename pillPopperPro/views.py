@@ -181,8 +181,42 @@ def home_page(request):
     return render(request, 'home.html', {})
 
 
+
 @login_required
 def dispense(request):
+    if request.method == "POST":
+        print("heyyyy")
+        data = json.loads(request.body)
+        pill_slot = data.get("slot")
+
+        try:
+            pill = Pill.objects.get(user=request.user, pill_slot=pill_slot)
+            print(pill.quantity_remaining)
+
+            #weirdly always one off also need to add new notifcation about when empty 
+            if pill.quantity_remaining > 0:
+                pill.quantity_remaining -= 1
+                print(pill)
+                pill.save()
+                print(pill.quantity_remaining)
+
+ 
+                refill_warning = pill.quantity_remaining == 3
+                print(pill.quantity_remaining)
+
+                return JsonResponse({
+                    "success": True,
+                    "quantity_remaining": pill.quantity_remaining,
+                    "refill_warning": refill_warning
+                })
+                
+            else:
+                return JsonResponse({"success": False, "error": "No pills remaining!"}, status=400)
+
+        except Pill.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Pill not found"}, status=404)
+
+    # old
     context = {}
     pills = Pill.objects.filter(user=request.user)
     pill_dict = {pill.pill_slot: pill for pill in pills}
@@ -193,7 +227,6 @@ def dispense(request):
         context[f'pill_image{i}'] = pill.image.url if pill and pill.image else "/static/pill.jpeg"
 
     return render(request, 'dispense.html', context)
-
 
 
 #@login_required

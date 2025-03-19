@@ -27,7 +27,8 @@ from django.urls import path
 urlpatterns = [
     path('', views.home_page, name='root'), 
     path('oauth/', include('social_django.urls', namespace='social')),
-    path('dispense', views.dispense, name='dispense'),
+    #path('dispense', views.dispense, name='dispense'),
+    path('dispense/', views.dispense, name='dispense'),
     path('pill_box', views.pill_box, name='pill_box'),
     path('new_pill_form/<int:slot_id>/', views.new_pill_form, name='new_pill_form'),
     path('account',views.account, name='account'),
