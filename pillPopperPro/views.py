@@ -397,13 +397,21 @@ def dashboard(request):
     pills = Pill.objects.filter(user=request.user)
     taken_times = []
     scheduled_times = []
+    accuracy_stats = {}
 
     for pill in pills:
+        taken_datetimes = []
+        correct_takes = 0
+        total_scheduled = 0
+        pill_timezone = pytz.timezone(pill.timezone)  
         for taken_time in pill.taken_times:
             dt = datetime.datetime.fromisoformat(taken_time)
+            dt2 = datetime.datetime.fromisoformat(taken_time).replace(tzinfo=pytz.utc).astimezone(pill_timezone)
+            taken_datetimes.append(dt2)
+            
 
         
-            pill_timezone = pytz.timezone(pill.timezone)  
+            
             dt = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone) 
 
             day = dt.strftime("%a %m/%d")
@@ -430,6 +438,13 @@ def dashboard(request):
 
                 hour = f"{dt.hour}:00"
                 time = dt.strftime("%I:%M %p %Z")
+                total_scheduled += 1  
+
+
+                on_time = any(abs((dt - taken_dt).total_seconds()) <= 1800 for taken_dt in taken_datetimes)
+
+                if on_time:
+                    correct_takes += 1  
 
                 if not any(t["day"] == formatted_day and t["hour"] == hour and t["name"] == pill.name for t in taken_times):
                     scheduled_times.append({
@@ -437,14 +452,17 @@ def dashboard(request):
                         "hour": hour,
                         "name": pill.name,
                         "slot": pill.pill_slot,
-                        "time": time
+                        "time": time,
                     })
+        accuracy = round((correct_takes / total_scheduled) * 100, 2) if total_scheduled > 0 else 0
+        accuracy_stats[pill.name] = accuracy
 
     context = {
         "last_7_days": last_7_days,
         "hours": hours,
         "taken_times_json": json.dumps(taken_times),
-        "scheduled_times_json": json.dumps(scheduled_times)
+        "scheduled_times_json": json.dumps(scheduled_times),
+        "accuracy_stats": accuracy_stats 
     }
 
     return render(request, "pillDashboard.html", context)

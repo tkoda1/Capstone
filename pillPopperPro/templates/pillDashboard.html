@@ -7,6 +7,18 @@
 <div class="dashboard-container">
     <h1 class="dashboard-title">Pill Tracking Dashboard</h1>
 
+    <div class="accuracy-container">
+        <h2 class="accuracy-title">Patient Medication Accuracy</h2>
+        <ul class="accuracy-list">
+            {% for pill, accuracy in accuracy_stats.items %}
+                <li class="accuracy-item">
+                    <span class="pill-name">{{ pill }}</span> - 
+                    <span class="accuracy-value">{{ accuracy }}%</span> accuracy
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
     <div class="pill-calendar">
         <div class="pill-calendar-header">
             <div class="hour-header"></div> 
