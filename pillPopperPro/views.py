@@ -396,6 +396,7 @@ def dashboard(request):
     
     pills = Pill.objects.filter(user=request.user)
     taken_times = []
+    scheduled_times = []
 
     for pill in pills:
         for taken_time in pill.taken_times:
@@ -416,11 +417,34 @@ def dashboard(request):
                 "slot": pill.pill_slot,
                 "time": time  
             })
+        
+        for day_offset in range(7):  
+            scheduled_date = today - timedelta(days=day_offset)
+            formatted_day = scheduled_date.strftime("%a %m/%d")
+            pill_timezone = pytz.timezone(pill.timezone)
+
+            for disposal_time in pill.disposal_times:
+                time_obj = datetime.datetime.strptime(disposal_time, "%H:%M").time()
+                dt = datetime.datetime.combine(scheduled_date, time_obj)
+                dt = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)  
+
+                hour = f"{dt.hour}:00"
+                time = dt.strftime("%I:%M %p %Z")
+
+                if not any(t["day"] == formatted_day and t["hour"] == hour and t["name"] == pill.name for t in taken_times):
+                    scheduled_times.append({
+                        "day": formatted_day,
+                        "hour": hour,
+                        "name": pill.name,
+                        "slot": pill.pill_slot,
+                        "time": time
+                    })
 
     context = {
         "last_7_days": last_7_days,
         "hours": hours,
-        "taken_times_json": json.dumps(taken_times) 
+        "taken_times_json": json.dumps(taken_times),
+        "scheduled_times_json": json.dumps(scheduled_times)
     }
 
     return render(request, "pillDashboard.html", context)

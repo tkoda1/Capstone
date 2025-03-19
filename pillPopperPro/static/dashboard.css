@@ -64,7 +64,6 @@
     font-size: 9px; 
     font-weight: normal;
     text-align: center;
-    padding: 5px;
     border-radius: 3px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -75,7 +74,6 @@
     font-size: 9px; 
     font-weight: normal;
     text-align: center;
-    padding: 5px;
     border-radius: 3px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -86,7 +84,6 @@
     font-size: 9px; 
     font-weight: normal;
     text-align: center;
-    padding: 5px;
     border-radius: 3px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -97,7 +94,6 @@
     font-size: 9px; 
     font-weight: normal;
     text-align: center;
-    padding: 5px;
     border-radius: 3px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -108,7 +104,6 @@
     font-size: 9px; 
     font-weight: normal;
     text-align: center;
-    padding: 5px;
     border-radius: 3px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -119,7 +114,17 @@
     font-size: 9px; 
     font-weight: normal;
     text-align: center;
-    padding: 5px;
     border-radius: 3px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.pill-box-missed {
+    background: rgba(255, 253, 253, 0.1); 
+    color: #333;
+    font-size: 9px;
+    font-weight: normal;
+    text-align: center;
+    border-radius: 3px;
+    border: 1px solid #2c3e50; 
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }

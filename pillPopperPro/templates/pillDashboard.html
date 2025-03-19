@@ -31,6 +31,8 @@
     console.log("Pill tracking dashboard loaded.");
 
     const takenTimes = JSON.parse('{{ taken_times_json|escapejs }}');
+    const scheduledTimes = JSON.parse('{{ scheduled_times_json|escapejs }}');
+
     console.log("Loaded takenTimes:", takenTimes);
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -48,6 +50,18 @@
                 slotElement.appendChild(pillBox);
             } else {
                 console.warn(`No matching slot found for ${slotId}`);
+            }
+        });
+
+        scheduledTimes.forEach(entry => {
+            const slotId = `slot-${entry.day}-${entry.hour}`;
+            const slotElement = document.getElementById(slotId);
+            if (slotElement) {
+                const pillBox = document.createElement("div");
+                pillBox.classList.add("pill-box-missed");
+                pillBox.innerText = entry.name;
+                pillBox.setAttribute("title", `Scheduled for: ${entry.time}`);
+                slotElement.appendChild(pillBox);
             }
         });
     });
