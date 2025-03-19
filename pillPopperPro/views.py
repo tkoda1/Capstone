@@ -390,36 +390,31 @@ def register_action(request):
 @login_required
 def dashboard(request):
     today = now().date()
-    last_7_days = [(today - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(6, -1, -1)]
-    hours = [f"{h}:00" for h in range(24)]
+    last_7_days = [(today - timedelta(days=i)).strftime("%a %m/%d") for i in range(6, -1, -1)]
+    hours = [f"{h}:00" for h in range(24)]  
 
-    user_pills = Pill.objects.filter(user=request.user)
     
-    taken_times_data = []
-    
-    for pill in user_pills:
-        for time in pill.taken_times:
-            timestamp = datetime.datetime.fromisoformat(time)
-            day = timestamp.strftime("%Y-%m-%d")  
-            hour = timestamp.strftime("%H:00")    
+    pills = Pill.objects.filter(user=request.user)
+    taken_times = []
 
-            taken_times_data.append({
-                "day": day,
-                "hour": hour,
-                "name": pill.name,
-                "pill_slot": pill.pill_slot
-            })
-    print(taken_times_data)
-    
+    for pill in pills:
+        for taken_time in pill.taken_times:
+            dt = datetime.datetime.fromisoformat(taken_time)
+            day = dt.strftime("%a %m/%d")
+            hour = f"{dt.hour}:00"
+
+            taken_times.append({"day": day, "hour": hour, "name": pill.name})
+
     context = {
         "last_7_days": last_7_days,
         "hours": hours,
-        "taken_times_json": json.dumps(taken_times_data)
+        "taken_times_json": json.dumps(taken_times) 
     }
 
     return render(request, "pillDashboard.html", context)
 
-@login_required
+
+@login_requiredd
 def get_pills(request):
     pills = []
     for p in Pill.objects.all().order_by('pill_slot'):

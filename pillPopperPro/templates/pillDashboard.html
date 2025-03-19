@@ -8,20 +8,20 @@
     <h1 class="dashboard-title">Pill Tracking Dashboard</h1>
 
     <div class="pill-calendar">
+        <!-- Top row: Days of the past 7 days -->
         <div class="pill-calendar-header">
-            <div class="empty-cell"></div>
+            <div class="hour-header"></div> <!-- Empty corner for alignment -->
             {% for day in last_7_days %}
                 <div class="day-header">{{ day }}</div>
             {% endfor %}
         </div>
 
+        <!-- 24 rows for hours of the day -->
         {% for hour in hours %}
             <div class="hour-row">
-                <div class="hour-label">{{ hour }}</div>
+                <div class="hour-label">{{ hour }}</div>  <!-- Left-side Time Column -->
                 {% for day in last_7_days %}
-                    <div class="pill-slot" id="slot-{{ day }}-{{ hour }}">
-                        <!-- Pill entries will be inserted here dynamically -->
-                    </div>
+                    <div class="pill-slot" id="slot-{{ day }}-{{ hour }}"></div>
                 {% endfor %}
             </div>
         {% endfor %}
@@ -29,21 +29,27 @@
 </div>
 
 <script>
+    console.log("Pill tracking dashboard loaded.");
+
     const takenTimes = JSON.parse('{{ taken_times_json|escapejs }}');
+    console.log("Loaded takenTimes:", takenTimes);
 
     document.addEventListener("DOMContentLoaded", function () {
         takenTimes.forEach(entry => {
             const slotId = `slot-${entry.day}-${entry.hour}`;
+            console.log(`Looking for element with ID: ${slotId}`);
+
             const slotElement = document.getElementById(slotId);
             if (slotElement) {
                 const pillBox = document.createElement("div");
                 pillBox.classList.add("pill-box");
                 pillBox.innerText = entry.name;
                 slotElement.appendChild(pillBox);
+            } else {
+                console.warn(`No matching slot found for ${slotId}`);
             }
         });
     });
 </script>
 
 {% endblock %}
-
