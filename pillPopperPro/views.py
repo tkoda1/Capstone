@@ -1,68 +1,41 @@
-from django.shortcuts import render
-from django.shortcuts import render
-from django import forms
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from google.oauth2.credentials import Credentials
-import pytz
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
-from django.http import HttpResponse, Http404
-
-from django.urls import reverse
-from django.contrib.auth import authenticate, login, logout
-from pillPopperPro.forms import LoginForm, RegisterForm
-
-from django.utils import timezone
-from django.shortcuts import render, redirect
-from .forms import PillForm
-from .models import Pill
-from django.shortcuts import render, get_object_or_404
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.contrib.auth import logout
-from django.shortcuts import redirect
-from django.shortcuts import render, redirect
-from google.oauth2 import credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from django.contrib.auth.decorators import login_required
 import datetime
-from django.utils.timezone import now, timedelta
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
 import json
-
-from django.shortcuts import redirect
-from social_django.utils import load_strategy
-from google.oauth2.credentials import Credentials
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import UserProfile  
-
 import os
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
 from configparser import ConfigParser
 from pathlib import Path
 
-
-from django.http import JsonResponse
+import pytz
+from django import forms
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.http import HttpResponse, Http404, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.timezone import now, timedelta
 from django.views.decorators.csrf import csrf_exempt
-import json
-import datetime
+from google.auth.transport.requests import Request
+from google.oauth2 import credentials
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from pillPopperPro.forms import LoginForm, RegisterForm
+from social_django.utils import load_strategy
 
+from .forms import PillForm
+from .models import Pill, UserProfile
+
+
+# Every time the dispense button is clicked the time is calculated and added to a list
+#corresponding with the pill. It is then rendered on the dashboard as the times the pills where taken
+#each medication is rendereed in a diffrent color
+#TODO: make sure the times are right 
 @csrf_exempt
 @login_required
 def update_taken_times(request):
     print("hi - view was triggered")
-    
     if request.method == "POST":
         data = json.loads(request.body)
         slot_id = int(data.get("slot"))
@@ -74,9 +47,7 @@ def update_taken_times(request):
             print(f"Found Pill: {pill}")
 
             timestamp_dt = datetime.datetime.fromisoformat(timestamp).replace(tzinfo=pytz.UTC)
-
             pill.taken_times.append(timestamp_dt.isoformat())
-
             seven_days_ago = datetime.datetime.now(pytz.UTC) - datetime.timedelta(days=7)
 
             pill.taken_times = [
@@ -84,7 +55,7 @@ def update_taken_times(request):
             ]
 
             pill.save()
-            print(f"Updated taken times for Pill Slot {slot_id}: {pill.taken_times}")
+            print(f"Updated times for Pill Slot {slot_id}: {pill.taken_times}")
 
             return JsonResponse({"status": "success", "taken_times": pill.taken_times})
         
@@ -94,7 +65,8 @@ def update_taken_times(request):
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
 
 
-
+#TODO:DELete I do notlike this it is for the acccount page though it may be needed
+#it associates a time zone with the user and lets them change it 
 @login_required
 def update_timezone(request):
     if request.method == 'POST':
@@ -112,6 +84,7 @@ def update_timezone(request):
 
 
 
+#Tring to get the OAth to work 
 @login_required
 def google_auth_callback(request):
     strategy = load_strategy(request)
@@ -119,9 +92,10 @@ def google_auth_callback(request):
   
 
 
-
 SCOPES = ['https://www.googleapis.com/auth/calendar.events']
 
+
+#This is just needed in order to be able to use the google calander API and add events
 def get_google_calendar_service(request):
     user = request.user
     BASE_DIR = Path(__file__).resolve().parent.parent
@@ -170,18 +144,21 @@ def get_google_calendar_service(request):
 
     if not creds.scopes or 'https://www.googleapis.com/auth/calendar.events' not in creds.scopes:
         print("Missing required Google Calendar scopes. User must log in again.")
-        return None  # Missing scopes
+        return None  
 
     return build("calendar", "v3", credentials=creds)
 
   
 
+#Renders home page
 @login_required
 def home_page(request):
     return render(request, 'home.html', {})
 
 
-
+#This is the functionalitu for the dispense page
+#has both post and get post is so that the like pill quantity goes down
+#get is just to render the general dispensal page. The logic is a little weird
 @login_required
 def dispense(request):
     if request.method == "POST":
@@ -214,7 +191,6 @@ def dispense(request):
             else:
                 return JsonResponse({"success": False, "no_pills": True}, status=400)
 
-
         except Pill.DoesNotExist:
             return JsonResponse({"success": False, "error": "Pill not found"}, status=404)
 
@@ -244,6 +220,9 @@ def pill_information(request, pill_slot):
 
 
 #@login_required
+
+#Renderes the pillBox page by cycling though the entered pills if a pill was not entered
+#a defult value is just put in 
 @login_required
 def pill_box(request):
     num_slots = 6  
@@ -262,6 +241,9 @@ def pill_box(request):
     return render(request, 'pillBox.html', context)
 
 
+#Mess with this and we willl have words
+#THis is the form where users enter in information about their medication 
+#users can enter in multiple times to take a medicaiton
 #@login_required
 @login_required
 def new_pill_form(request, slot_id):
@@ -297,11 +279,12 @@ def new_pill_form(request, slot_id):
     )
     new_pill.save()
 
-    # Add event to Google Calendar
+    
     service = get_google_calendar_service(request)
     print(pytz.timezone(new_pill.timezone).zone)
     
 
+    #if the user is logged in via gCAL then the notfication is added to the calander
     if service:
         user_timezone = pytz.timezone(new_pill.timezone)  
 
@@ -314,7 +297,6 @@ def new_pill_form(request, slot_id):
 
             print(f"Event Time (localized to user timezone): {event_time}")
 
-            
             
             event = {
                 'summary': f"Take {new_pill.name}",
@@ -329,6 +311,7 @@ def new_pill_form(request, slot_id):
     #name = 'pill_name' +  str(context['id'])
     #context[name] = form.cleaned_data['name']
 
+    #needed to render the pill box page. Could this have been done better? yes
     num_slots = 6  
     context = {}
 
@@ -359,6 +342,7 @@ def logout_view(request):
     return redirect("login")
 
 
+#from web app
 def login_action(request):
     context = {}
 
@@ -391,7 +375,7 @@ def login_action(request):
         context['error'] = forms.ValidationError("Invalid username/password")
         return render(request, 'login.html', context)
     
-
+#from web app
 def register_action(request):
     context = {}
 
@@ -422,6 +406,7 @@ def register_action(request):
     return render(request, 'home.html', context)
 
 
+#basically this helps to render the dashboard 
 @login_required
 def dashboard(request):
     today = now().date()
@@ -434,18 +419,19 @@ def dashboard(request):
     scheduled_times = []
     accuracy_stats = {}
 
+    #goes though each of the users pills
     for pill in pills:
         taken_datetimes = []
         correct_takes = 0
         total_scheduled = 0
         pill_timezone = pytz.timezone(pill.timezone)  
+        #goes though each time and displays it calulating right time
+        #TODO: make sure those calculations are right 
         for taken_time in pill.taken_times:
             dt = datetime.datetime.fromisoformat(taken_time)
             dt2 = datetime.datetime.fromisoformat(taken_time).replace(tzinfo=pytz.utc).astimezone(pill_timezone)
             taken_datetimes.append(dt2)
             
-
-        
             
             dt = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone) 
 
@@ -461,6 +447,8 @@ def dashboard(request):
                 "time": time  
             })
         
+        #This just makes a list of all the times the user was ment to take their medication
+        #and adds it to a big list again idk if the time calculations are right 
         for day_offset in range(7):  
             scheduled_date = today - timedelta(days=day_offset)
             formatted_day = scheduled_date.strftime("%a %m/%d")

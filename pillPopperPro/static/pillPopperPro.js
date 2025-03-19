@@ -65,7 +65,6 @@ function dispense_pill() {
     })
     .then(response => {
         if (!response.ok) {
-            // If the response is 400 (no more pills), show popup
             if (response.status === 400) {
                 alert("No more pills to dispense");
                 throw new Error("No pills remaining");
@@ -149,7 +148,7 @@ function updatePage(f, xhr) {
     displayError(response)
 }
 
-// Alerts user to take their medication at the scheduled time
+
 function pill_schedule() {
     let xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
@@ -161,7 +160,6 @@ function pill_schedule() {
     xhr.send()
 }
 
-// Alerts users to refill medication at the scheduled time
 function pill_refills() {
     let xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
