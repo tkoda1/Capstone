@@ -1,23 +1,44 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="flex justify-center items-center min-h-screen bg-[#dbe7eb]">
-    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">Your Account</h2>
-        <p class="text-gray-600 mb-4">Manage your settings and log out below.</p>
+<div class="container3">
+    <div class="account-box">
+        <h2 class="account-title">Your Account</h2>
+
+        <div class="user-info">
+            <p><strong>Username:</strong> {{ request.user.username }}</p>
+            <p><strong>Email:</strong> {{ request.user.email }}</p>
+        </div>
+
+        <hr class="divider">
+
+        <h3 class="section-title">Manage Medications</h3>
+        <p class="description">If you logged in with google your medication schedule will be added to your Google Calendar automatically.</p>
+
+        <form method="post" action="{% url 'update_timezone' %}" class="timezone-form">
+            {% csrf_token %}
+            <label for="timezone">Set Your Timezone:</label>
+            <select id="timezone" name="timezone">
+                <option value="UTC" {% if user_profile.timezone == "UTC" %}selected{% endif %}>UTC</option>
+                <option value="America/New_York" {% if user_profile.timezone == "America/New_York" %}selected{% endif %}>Eastern Time (EST)</option>
+                <option value="America/Chicago" {% if user_profile.timezone == "America/Chicago" %}selected{% endif %}>Central Time (CST)</option>
+                <option value="America/Denver" {% if user_profile.timezone == "America/Denver" %}selected{% endif %}>Mountain Time (MST)</option>
+                <option value="America/Los_Angeles" {% if user_profile.timezone == "America/Los_Angeles" %}selected{% endif %}>Pacific Time (PST)</option>
+            </select>
+            <button type="submit" class="btn save-btn">Save Timezone</button>
+        </form>
+
+        <hr class="divider">
 
         {% if request.user.is_authenticated and request.user.socialaccount_set.all %}
-            <p class="text-red-500 text-sm mb-4">
-                You signed in with Google. Click logout, then <a href="https://accounts.google.com/logout" class="underline">log out from Google</a> to fully disconnect.
+            <p class="warning-text">
+                You signed in with Google. Click logout, then <a href="https://accounts.google.com/logout" class="external-link">log out from Google</a> to fully disconnect.
             </p>
         {% endif %}
 
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit" 
-                    class="w-full bg-[#2c3e50] text-white py-3 rounded-full text-lg font-semibold hover:bg-[#1e2b38] transition">
-                Logout
-            </button>
+            <button type="submit" class="btn logout-btn">Logout</button>
         </form>
     </div>
 </div>

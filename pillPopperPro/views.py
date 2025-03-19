@@ -36,6 +36,34 @@ import json
 from django.shortcuts import redirect
 from social_django.utils import load_strategy
 from google.oauth2.credentials import Credentials
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import UserProfile  
+
+import os
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from configparser import ConfigParser
+from pathlib import Path
+
+@login_required
+def update_timezone(request):
+    if request.method == 'POST':
+        new_timezone = request.POST.get('timezone')
+        if new_timezone:
+            user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+            user_profile.timezone = new_timezone
+            user_profile.save()
+            
+            messages.success(request, "Timezone updated successfully!")
+        else:
+            messages.error(request, "Please select a valid timezone.")
+
+    return redirect('account')  
+
 
 
 @login_required
@@ -46,13 +74,6 @@ def google_auth_callback(request):
 
 
 
-import os
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from configparser import ConfigParser
-from pathlib import Path
 
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.events']
@@ -220,7 +241,7 @@ def new_pill_form(request, slot_id):
                 'summary': f"Take {new_pill.name}",
                 'description': f"Dosage: {new_pill.dosage} mg",
                 'start': {'dateTime': event_time.isoformat(), 'timeZone': pytz.timezone(new_pill.timezone).zone},
-                'end': {'dateTime': (event_time + datetime.timedelta(minutes=30)).isoformat(), 'timeZone': pytz.timezone(new_pill.timezone).zone},
+                'end': {'dateTime': (event_time + datetime.timedelta(minutes=15)).isoformat(), 'timeZone': pytz.timezone(new_pill.timezone).zone},
                 'recurrence': ['RRULE:FREQ=DAILY'],
             }
 

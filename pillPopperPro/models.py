@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.contrib.auth.models import User
 
 class Pill(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True) 
@@ -15,3 +16,10 @@ class Pill(models.Model):
 
     def __str__(self):
         return f"Pill id={self.id} | User: {self.user} | {self.name} | Time Zone: {self.timezone}"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    timezone = models.CharField(max_length=50, default="UTC")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.timezone}"
