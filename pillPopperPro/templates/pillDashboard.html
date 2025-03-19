@@ -8,18 +8,17 @@
     <h1 class="dashboard-title">Pill Tracking Dashboard</h1>
 
     <div class="pill-calendar">
-        <!-- Top row: Days of the past 7 days -->
         <div class="pill-calendar-header">
-            <div class="hour-header"></div> <!-- Empty corner for alignment -->
+            <div class="hour-header"></div> 
             {% for day in last_7_days %}
                 <div class="day-header">{{ day }}</div>
             {% endfor %}
         </div>
 
-        <!-- 24 rows for hours of the day -->
+       
         {% for hour in hours %}
             <div class="hour-row">
-                <div class="hour-label">{{ hour }}</div>  <!-- Left-side Time Column -->
+                <div class="hour-label">{{ hour }}</div> 
                 {% for day in last_7_days %}
                     <div class="pill-slot" id="slot-{{ day }}-{{ hour }}"></div>
                 {% endfor %}
@@ -38,12 +37,14 @@
         takenTimes.forEach(entry => {
             const slotId = `slot-${entry.day}-${entry.hour}`;
             console.log(`Looking for element with ID: ${slotId}`);
+            console.log(`Looking for element with ID: ${entry.slotId}`);
 
             const slotElement = document.getElementById(slotId);
             if (slotElement) {
                 const pillBox = document.createElement("div");
-                pillBox.classList.add("pill-box");
+                pillBox.classList.add(`pill-box-${entry.slot}`);
                 pillBox.innerText = entry.name;
+                pillBox.setAttribute("title", `Taken at: ${entry.time}`);
                 slotElement.appendChild(pillBox);
             } else {
                 console.warn(`No matching slot found for ${slotId}`);

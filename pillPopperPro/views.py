@@ -400,10 +400,22 @@ def dashboard(request):
     for pill in pills:
         for taken_time in pill.taken_times:
             dt = datetime.datetime.fromisoformat(taken_time)
+
+        
+            pill_timezone = pytz.timezone(pill.timezone)  
+            dt = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone) 
+
             day = dt.strftime("%a %m/%d")
             hour = f"{dt.hour}:00"
+            time = dt.strftime("%I:%M %p %Z") 
 
-            taken_times.append({"day": day, "hour": hour, "name": pill.name})
+            taken_times.append({
+                "day": day,
+                "hour": hour,
+                "name": pill.name,
+                "slot": pill.pill_slot,
+                "time": time  
+            })
 
     context = {
         "last_7_days": last_7_days,
@@ -414,7 +426,7 @@ def dashboard(request):
     return render(request, "pillDashboard.html", context)
 
 
-@login_requiredd
+@login_required
 def get_pills(request):
     pills = []
     for p in Pill.objects.all().order_by('pill_slot'):

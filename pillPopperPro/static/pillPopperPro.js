@@ -43,7 +43,7 @@ function dispense_pill() {
     const pillImageElement = document.getElementById("id_pill_picture");
     const pillSlot = pillImageElement.getAttribute("data-slot");
 
-    console.log("Pill Slot Detected:", pillSlot);  // ✅ Debugging output
+    console.log("Pill Slot Detected:", pillSlot); 
 
     if (!["1", "2", "3", "4", "5", "6"].includes(pillSlot)) {
         displayError("Invalid pillImage alt text to signify pill slot")
