@@ -48,6 +48,7 @@
 import socket
 import time
 from adafruit_pca9685 import PCA9685
+from digitalio import DigitalInOut
 from board import SCL, SDA
 import busio
 
