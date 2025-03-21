@@ -9,7 +9,7 @@ import time
 import rel
 import json
 # import loadcell
-# import servo
+import servo
 
 def on_message(ws, message):
     print(f"Received message: {message}")
@@ -18,7 +18,9 @@ def on_message(ws, message):
         on_error(ws, "Invalid data sent")
     elif data["action"] == "release":
         print("Releasing pill")
-        # call servo function
+        if not data["slot"]:
+            on_error(ws, "Invalid pill slot sent")
+        servo.dispense_pill(int(data["slot"])-1)
     else:
         on_error(ws, f"Invalid action: {data['action']}")
 
