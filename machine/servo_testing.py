@@ -34,20 +34,8 @@ def dispense_pill(slot):
 #     pca.channels[SERVO_CHANNEL].duty_cycle = duty
 #     time.sleep(1)  
 
-message = '3'
 
-slot = int(message)
-if 0 <= slot <= 5:
-    print(f"Received slot: {slot}, moving servo.")
-    dispense_pill(slot)
-else:
-    print("Unable to dispense pill")
-
-        # try:
-        #     angle = int(message)
-        #     if 0 <= angle <= 180:
-        #         print(f"Received angle: {angle}, moving servo.")
-        #         set_angle(angle) 
-        #         client.send(f"Angle set to {angle}".encode('utf-8'))
-        #     else:
-        #         client.send("Please enter a valid angle between 0 and 180.".encode('utf-8'))
+for x in range(0,5):
+    print(f"Received slot: {x}, moving servo.")
+    dispense_pill(x)
+    print('Finished dispensing pill')
