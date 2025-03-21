@@ -1,6 +1,7 @@
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 import json
+# from .client import *
 
 
 
@@ -29,11 +30,13 @@ class PillPopperProConsumer(WebsocketConsumer):
         # self.user = self.scope["user"]
 
         self.broadcast_data({})
+        # connect_to_server()
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
             self.group_name, self.channel_name
         )
+        #disconnect_from_server()
 
     def receive(self, **kwargs):
         print("RECEIVING DATA")
@@ -55,6 +58,7 @@ class PillPopperProConsumer(WebsocketConsumer):
         action = data['action']
 
         if action == 'release':
+            # send_message_to_server()
             self.broadcast_data(data)
             return
 
