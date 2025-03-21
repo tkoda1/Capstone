@@ -60,11 +60,12 @@ SERVO_CHANNEL = 0
 
 def set_angle(angle):
     """Convert angle (0-180) to PCA9685 PWM signal and move the servo."""
-    min_pulse = 150  
-    max_pulse = 600 
+    min_pulse = 0.5  
+    max_pulse = 2.5
 
-    pulse_length = min_pulse + (angle / 180) * (max_pulse - min_pulse)
-    pca.channels[SERVO_CHANNEL].duty_cycle = int(pulse_length)
+    pulse_width = min_pulse + (angle / 180) * (max_pulse - min_pulse)
+    duty = int(pulse_width*65535 /20)
+    pca.channels[SERVO_CHANNEL].duty_cycle = duty
     time.sleep(1)  
 
 SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  
