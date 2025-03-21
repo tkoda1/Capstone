@@ -9,10 +9,12 @@ client.connect((SERVER_ADDRESS, PORT))
 
 try:
     while True:
-        angle = input("Enter angle (0-180): ")
+        # angle = input("Enter angle (0-180): ")
+        slot = input("Enter angle (0-5): ")
 
         try:
-            client.send(angle.encode('utf-8'))
+            #client.send(angle.encode('utf-8'))
+            client.send(slot.encode('utf-8'))
             data = client.recv(1024)  
             print(f"Server response: {data.decode('utf-8')}")
         except ValueError:
