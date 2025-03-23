@@ -58,7 +58,7 @@ pca.frequency = 50
 
 SERVO_CHANNEL = 0  
 
-def dispense_pill(slot):
+def dispense_pill(slot, angle=180):
     min_pulse = 0.5 
     max_pulse = 2.5  
     period = 20  
