@@ -59,25 +59,16 @@ pca.frequency = 50
 SERVO_CHANNEL = 0  
 
 def dispense_pill(slot):
-    """Convert angle (0-180) to PCA9685 PWM signal and move the servo."""
-    min_pulse = 0.5  
-    max_pulse = 2.5
-    angle = 180
+    min_pulse = 0.5 
+    max_pulse = 2.5  
+    period = 20  
 
     pulse_width = min_pulse + (angle / 180) * (max_pulse - min_pulse)
-    duty = int(pulse_width*65535 /20)
-    pca.channels[slot].duty_cycle = int(410 / 4095 * 65535)
-    time.sleep(5)
+    
+    duty_cycle = int((pulse_width / period) * 65535)
 
-# def set_angle(angle):
-#     """Convert angle (0-180) to PCA9685 PWM signal and move the servo."""
-#     min_pulse = 0.5  
-#     max_pulse = 2.5
-
-#     pulse_width = min_pulse + (angle / 180) * (max_pulse - min_pulse)
-#     duty = int(pulse_width*65535 /20)
-#     pca.channels[SERVO_CHANNEL].duty_cycle = duty
-#     time.sleep(1)  
+    pca.channels[slot].duty_cycle = duty_cycle
+    time.sleep(1)  
 
 SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  
 PORT = 1

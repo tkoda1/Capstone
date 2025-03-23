@@ -10,7 +10,7 @@ client.connect((SERVER_ADDRESS, PORT))
 try:
     while True:
         # angle = input("Enter angle (0-180): ")
-        slot = input("Enter angle (0-5): ")
+        slot = input("Enter slot (0-5): ")
 
         try:
             #client.send(angle.encode('utf-8'))
