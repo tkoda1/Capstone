@@ -3,13 +3,13 @@
 # pip install websocket-client
 
 import websocket
-from constants import WEBSOCKET_URL
+from constants import WEBSOCKET_URL, LOAD_CELL_ERROR
 import _thread
 import time
 import rel
 import json
+import servo, speaker
 # import loadcell
-import servo
 
 def on_message(ws, message):
     print(f"Received message: {message}")
@@ -17,10 +17,9 @@ def on_message(ws, message):
     if not data or not data["action"]:
         on_error(ws, "Invalid data sent")
     elif data["action"] == "release":
-        print("Releasing pill")
-        if not data["slot"]:
-            on_error(ws, "Invalid pill slot sent")
-        servo.dispense_pill(int(data["slot"])-1)
+        release_pill(data)
+    elif data["action"] == "refill":
+        refill_reminder(data)
     else:
         on_error(ws, f"Invalid action: {data['action']}")
 
@@ -32,6 +31,26 @@ def on_close(ws, close_status_code, close_msg):
 
 def on_open(ws):
     print("Opened connection")
+
+def release_pill(data):
+    print("Releasing pill")
+    if not data["slot"]:
+        on_error(ws, "Invalid pill slot sent")
+    # initial_weight = loadcell.read_weight()
+    speaker.play_release_pill()
+    servo.dispense_pill(int(data["slot"])-1)
+    # final_weight = loadcell.read_weight()
+    # if (final_weight - initial_weight < LOAD_CELL_ERROR):
+    #     on_error(f"Pill not dispensed initial: {initial_weight} final: {final_weight}")
+    #     speaker.play_not_dispensed()
+    #     return
+    speaker.play_finish_dispensing()
+
+def refill_reminder(data):
+    print("Refill reminder")
+    if not data["slot"]:
+        on_error(ws, "Invalid pill slot sent for reminder")
+    speaker.play_refill_reminder()
 
 def send_message(ws, message):
     ws.send(json.dumps(message))
