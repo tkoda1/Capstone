@@ -72,7 +72,7 @@ def dispense_pill(slot, angle=180):
     time.sleep(0.5)
 
 def reset_servo(slot):
-    dispense_pill(slot, angle=0)
+    pca.channels[slot].duty_cycle = 0
     time.sleep(0.5)  
 
 
