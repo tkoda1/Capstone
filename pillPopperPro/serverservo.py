@@ -59,26 +59,23 @@ pca.frequency = 50
 # Servo pulse range in milliseconds
 MIN_PULSE = 600  
 MAX_PULSE = 2400  
-PERIOD = 20000  # 20ms for 50Hz
 
 def angle_to_duty(angle):
-    """ Convert an angle (0-180) to the appropriate duty cycle for the PCA9685. """
     pulse_width = MIN_PULSE + (angle / 180.0) * (MAX_PULSE - MIN_PULSE)
-    duty_cycle = int((pulse_width / PERIOD) * 4095)  # 12-bit resolution
+    duty_cycle = int(pulse_width * 65535 / 20000)
     return duty_cycle
 
 def dispense_pill(slot, angle=180):
-    """ Move the servo to the specified angle for the given slot. """
     duty_cycle = angle_to_duty(angle)
     pca.channels[slot].duty_cycle = duty_cycle
     print(f"Moving slot {slot} to {angle} degrees.")
-    time.sleep(0.5)
+    time.sleep(1)
 
 def reset_servo(slot):
     """ Reset the servo to its neutral position (0 degrees). """
     pca.channels[slot].duty_cycle = angle_to_duty(0)  # Move to 0 degrees
     print(f"Resetting slot {slot} to 0 degrees.")
-    time.sleep(0.5)
+    time.sleep(1)
 
 # Bluetooth Server Setup
 SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  
