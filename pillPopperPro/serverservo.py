@@ -54,7 +54,7 @@ import busio
 
 i2c = busio.I2C(SCL, SDA)
 pca = PCA9685(i2c)
-pca.frequency = 60  
+pca.frequency = 50  
 
 def dispense_pill(slot, angle=180):
     min_pulse = 1.0  
