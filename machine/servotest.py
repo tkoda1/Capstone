@@ -38,13 +38,39 @@ import busio
 
 # Initialize I2C and PCA9685
 i2c = busio.I2C(SCL, SDA)
-
-print("staring)")
 pwm = PCA9685(i2c)
-pwm.frequency = 60
-channel = 0
-min_pulze = 150
-max_pulse = 600
-pwm.channels[channel].duty_cycle = max_pulse
-time.sleep(1)
-print("done")
+pwm.frequency = 50  # MG996R expects ~50Hz
+
+# Adjusted for MG996R
+min_pulse = 600     # μs
+max_pulse = 2400    # μs
+
+servo_channel = 0
+
+def angle_to_duty(angle):
+    pulse_width = min_pulse + (angle / 180.0) * (max_pulse - min_pulse)
+    duty_cycle = int(pulse_width * 65535 / 20000)  # 20ms = 1 period at 50Hz
+    return duty_cycle
+
+try:
+    while True:
+        angle = input("Enter angle 10–170 (or 'q' to quit): ")
+        if angle.lower() == 'q':
+            break
+        try:
+            angle = float(angle)
+            if 10 <= angle <= 170:
+                duty = angle_to_duty(angle)
+                pwm.channels[servo_channel].duty_cycle = duty
+                print(f"Moving servo to {angle} degrees")
+                time.sleep(1)
+            else:
+                print("Try staying between 10 and 170 degrees.")
+        except ValueError:
+            print("Enter a valid number.")
+
+except KeyboardInterrupt:
+    print("Program stopped.")
+
+finally:
+    pwm.deinit()
