@@ -59,16 +59,15 @@ pca.frequency = 50
 SERVO_CHANNEL = 0  
 
 def dispense_pill(slot, angle=180):
-    min_pulse = 0.5 
-    max_pulse = 2.5  
-    period = 20  
+    min_pulse = 1.0  
+    max_pulse = 2.0  
+    period = 20 
 
-    pulse_width = min_pulse + (angle / 180) * (max_pulse - min_pulse)
+    pulse_width = min_pulse + (angle / 180.0) * (max_pulse - min_pulse)
     
     duty_cycle = int((pulse_width / period) * 65535)
 
-    pca.channels[slot].duty_cycle = duty_cycle
-    time.sleep(1)  
+    pca.channels[slot].duty_cycle = duty_cycle  
 
 SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  
 PORT = 1
