@@ -20,13 +20,18 @@ from board import SCL, SDA
 import busio
 
 i2c = busio.I2C(SCL, SDA)
-
-print("staring)")
 pwm = PCA9685(i2c)
 pwm.frequency = 60
+
 channel = 0
-min_pulze = 150
+min_pulse = 150
 max_pulse = 600
-pwm.channels[channel].duty_cycle = max_pulse
-time.sleep(1)
-print("done")
+
+while True:
+    print("Moving to min")
+    pwm.channels[channel].duty_cycle = min_pulse
+    time.sleep(1)
+    
+    print("Moving to max")
+    pwm.channels[channel].duty_cycle = max_pulse
+    time.sleep(1)
