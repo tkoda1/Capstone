@@ -102,9 +102,10 @@ try:
             if 0 <= slot <= 5:
                 print(f"Received slot: {slot}, moving servo.")
                 dispense_pill(slot)
-                client.send(f"Moved pill slot {slot}".encode('utf-8'))
+                # client.send(f"Moved pill slot {slot}".encode('utf-8'))
+                print("Dispensing")
                 reset_servo(slot)
-                client.send(f"Reset pill slot {slot}".encode('utf-8'))
+                client.send(f"Moved and reset pill slot {slot}".encode('utf-8'))
 
             else:
                 client.send("Please enter a valid angle between 0 and 5.".encode('utf-8'))
