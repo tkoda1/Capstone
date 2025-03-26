@@ -65,7 +65,7 @@ def dispense_pill(slot, angle=180):
     
     duty_cycle = int((pulse_width / period) * 4095)
 
-    pca.channels[slot].duty_cycle = 2048 # duty_cycle
+    pca.channels[slot].duty_cycle = duty_cycle # duty_cycle
 
     time.sleep(0.5)
 
@@ -100,10 +100,10 @@ try:
             if 0 <= slot <= 5:
                 print(f"Received slot: {slot}, moving servo.")
                 dispense_pill(slot)
-                # client.send(f"Moved pill slot {slot}".encode('utf-8'))
-                print("Dispensing")
-                reset_servo(slot)
-                client.send(f"Moved and reset pill slot {slot}".encode('utf-8'))
+                client.send(f"Moved pill slot {slot}".encode('utf-8'))
+                # print("Dispensing")
+                # reset_servo(slot)
+                # client.send(f"Moved and reset pill slot {slot}".encode('utf-8'))
 
             else:
                 client.send("Please enter a valid angle between 0 and 5.".encode('utf-8'))
