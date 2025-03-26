@@ -48,34 +48,39 @@
 import socket
 import time
 from adafruit_pca9685 import PCA9685
-from digitalio import DigitalInOut
 from board import SCL, SDA
 import busio
 
+# Initialize PCA9685
 i2c = busio.I2C(SCL, SDA)
 pca = PCA9685(i2c)
 pca.frequency = 50  
 
+# Servo pulse range in milliseconds
+MIN_PULSE = 600  
+MAX_PULSE = 2400  
+PERIOD = 20000  # 20ms for 50Hz
+
+def angle_to_duty(angle):
+    """ Convert an angle (0-180) to the appropriate duty cycle for the PCA9685. """
+    pulse_width = MIN_PULSE + (angle / 180.0) * (MAX_PULSE - MIN_PULSE)
+    duty_cycle = int((pulse_width / PERIOD) * 4095)  # 12-bit resolution
+    return duty_cycle
+
 def dispense_pill(slot, angle=180):
-    min_pulse = 1.0  
-    max_pulse = 2.0  
-    period = 16.7 
-
-    pulse_width = min_pulse + (angle / 180.0) * (max_pulse - min_pulse)
-    
-    duty_cycle = int((pulse_width / period) * 4095)
-
-    pca.channels[slot].duty_cycle = 2048 # duty_cycle
-
+    """ Move the servo to the specified angle for the given slot. """
+    duty_cycle = angle_to_duty(angle)
+    pca.channels[slot].duty_cycle = duty_cycle
+    print(f"Moving slot {slot} to {angle} degrees.")
     time.sleep(0.5)
 
 def reset_servo(slot):
-    pca.channels[slot].duty_cycle = 0
-    time.sleep(0.5)  
+    """ Reset the servo to its neutral position (0 degrees). """
+    pca.channels[slot].duty_cycle = angle_to_duty(0)  # Move to 0 degrees
+    print(f"Resetting slot {slot} to 0 degrees.")
+    time.sleep(0.5)
 
-
-
-
+# Bluetooth Server Setup
 SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  
 PORT = 1
 
@@ -93,34 +98,25 @@ try:
         data = client.recv(1024)
         if not data:
             break
+
         message = data.decode('utf-8')
 
         try:
-            slot = int(message)
-            if 0 <= slot <= 5:
-                print(f"Received slot: {slot}, moving servo.")
-                dispense_pill(slot)
-                client.send(f"Moved pill slot {slot}".encode('utf-8'))
-                # print("Dispensing")
-                # reset_servo(slot)
-                # client.send(f"Moved and reset pill slot {slot}".encode('utf-8'))
+            slot, angle = map(int, message.split(","))
 
+            if 0 <= slot <= 5 and 0 <= angle <= 180:
+                dispense_pill(slot, angle)
+                client.send(f"Moved slot {slot} to {angle} degrees.".encode('utf-8'))
             else:
-                client.send("Please enter a valid angle between 0 and 5.".encode('utf-8'))
+                client.send("Slot must be 0-5 and angle must be 0-180.".encode('utf-8'))
 
-        # try:
-        #     angle = int(message)
-        #     if 0 <= angle <= 180:
-        #         print(f"Received angle: {angle}, moving servo.")
-        #         set_angle(angle) 
-        #         client.send(f"Angle set to {angle}".encode('utf-8'))
-        #     else:
-        #         client.send("Please enter a valid angle between 0 and 180.".encode('utf-8'))
         except ValueError:
-            client.send("Invalid input. Please send an integer.".encode('utf-8'))
-except OSError as e:
-    pass
+            client.send("Invalid input format. Send 'slot,angle'.".encode('utf-8'))
 
-client.close()
-server.close()
+except OSError as e:
+    print(f"Error: {e}")
+
+finally:
+    client.close()
+    server.close()
 

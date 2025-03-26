@@ -1,4 +1,3 @@
-# Referencing GPIO documentation at https://gpiozero.readthedocs.io/en/v1.5.1/recipes.html#servo
 import socket
 
 SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  
@@ -9,18 +8,29 @@ client.connect((SERVER_ADDRESS, PORT))
 
 try:
     while True:
-        # angle = input("Enter angle (0-180): ")
-        slot = input("Enter slot (0-5): ")
+        slot = input("Enter slot (0-5) or 'q' to quit: ")
+        if slot.lower() == 'q':
+            break
+
+        angle = input("Enter angle (0-180): ")
 
         try:
-            #client.send(angle.encode('utf-8'))
-            client.send(slot.encode('utf-8'))
-            data = client.recv(1024)  
-            print(f"Server response: {data.decode('utf-8')}")
+            slot = int(slot)
+            angle = int(angle)
+
+            if 0 <= slot <= 5 and 0 <= angle <= 180:
+                message = f"{slot},{angle}"  # Sending both slot and angle
+                client.send(message.encode('utf-8'))
+                data = client.recv(1024)
+                print(f"Server response: {data.decode('utf-8')}")
+            else:
+                print("Slot must be 0-5 and angle must be 0-180.")
+
         except ValueError:
-            print("Please enter a valid integer.")
+            print("Please enter valid numbers for slot and angle.")
 
 except OSError as e:
-    pass
+    print(f"Error: {e}")
 
-client.close()
+finally:
+    client.close()
