@@ -68,7 +68,6 @@ def dispense_pill(slot, angle=180):
     duty_cycle = int((pulse_width / period) * 4095)
 
     pca.channels[slot].duty_cycle = duty_cycle 
-    time.sleep(1)
 
 SERVER_ADDRESS = "2C:CF:67:7E:B0:E4"  
 PORT = 1
