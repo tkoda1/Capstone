@@ -27,6 +27,6 @@ pwm.frequency = 60
 channel = 0
 min_pulze = 150
 max_pulse = 600
-pwm.channels[channel].=duty_cycle = max_pulse
+pwm.channels[channel].duty_cycle = max_pulse
 time.sleep(1)
 print("done")
