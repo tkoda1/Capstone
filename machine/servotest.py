@@ -16,6 +16,10 @@
 
 import time
 from adafruit_pca9685 import PCA9685
+from board import SCL, SDA
+import busio
+
+i2c = busio.I2C(SCL, SDA)
 
 print("staring)")
 pwm = PCA9685()
