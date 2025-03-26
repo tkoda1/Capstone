@@ -1,9 +1,10 @@
 # https://www.geeksforgeeks.org/working-with-wav-files-in-python-using-pydub/
 # pip install pydub
 # you need to set the speaker as the defualt audio output!
-
+'''
 from pydub import AudioSegment
 from pydub.playback import play
+
 from constants import ( 
     REFILL_PILL_PATH, 
     RELEASE_PILL_PATH,
@@ -42,3 +43,23 @@ def play_invalid_dispensing():
 # indicates if no pill was dispensed after servo motion
 def play_not_dispensed():
     play(not_dipensed)
+'''
+
+# pip install pydub
+
+import os
+from pydub import AudioSegment
+from pydub.playback import play
+
+TEST_PATH = "TestAudio.wav"
+
+# Check if file exists
+if os.path.exists(TEST_PATH):
+    test_audio = AudioSegment.from_file(file=TEST_PATH, format="wav")
+    print("File loaded successfully!")
+else:
+    print(f"Error: File '{TEST_PATH}' not found!")
+
+test_audio = AudioSegment.from_file(file = TEST_PATH, 
+                                      format = "wav")
+play(test_audio)
