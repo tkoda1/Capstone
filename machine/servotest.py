@@ -59,7 +59,7 @@ try:
             break
         try:
             angle = float(angle)
-            if 10 <= angle <= 170:
+            if 0 <= angle <= 180:
                 duty = angle_to_duty(angle)
                 pwm.channels[servo_channel].duty_cycle = duty
                 print(f"Moving servo to {angle} degrees")
