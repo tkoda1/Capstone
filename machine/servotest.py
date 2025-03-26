@@ -45,7 +45,7 @@ pwm.frequency = 50  # MG996R expects ~50Hz
 min_pulse = 600     # μs
 max_pulse = 2400    # μs
 
-servo_channel = 0
+servo_channel = 2
 
 def angle_to_duty(angle):
     pulse_width = min_pulse + (angle / 180.0) * (max_pulse - min_pulse)
