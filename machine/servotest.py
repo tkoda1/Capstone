@@ -22,7 +22,7 @@ import busio
 i2c = busio.I2C(SCL, SDA)
 
 print("staring)")
-pwm = PCA9685()
+pwm = PCA9685(i2c)
 pwm.set_pwm_freq(60)
 channel = 0
 min_pulze = 150
