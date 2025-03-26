@@ -51,7 +51,7 @@ import os
 from pydub import AudioSegment
 from pydub.playback import play
 
-TEST_PATH = "TestAudio.wav"
+TEST_PATH = "audioAlerts/testAudio.wav"
 
 # Check if file exists
 if os.path.exists(TEST_PATH):

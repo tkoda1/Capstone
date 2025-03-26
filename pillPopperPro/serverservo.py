@@ -54,20 +54,18 @@ import busio
 
 i2c = busio.I2C(SCL, SDA)
 pca = PCA9685(i2c)
-pca.frequency = 50  
-
-SERVO_CHANNEL = 0  
+pca.frequency = 60  
 
 def dispense_pill(slot, angle=180):
     min_pulse = 1.0  
     max_pulse = 2.0  
-    period = 20 
+    period = 16.7 
 
     pulse_width = min_pulse + (angle / 180.0) * (max_pulse - min_pulse)
     
-    duty_cycle = int((pulse_width / period) * 65535)
+    duty_cycle = int((pulse_width / period) * 4095)
 
-    pca.channels[slot].duty_cycle = 2048
+    pca.channels[slot].duty_cycle = 2048 # duty_cycle
 
     time.sleep(0.5)
 
