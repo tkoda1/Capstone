@@ -23,10 +23,10 @@ i2c = busio.I2C(SCL, SDA)
 
 print("staring)")
 pwm = PCA9685(i2c)
-pwm.set_pwm_freq(60)
+pwm.frequency = 60
 channel = 0
 min_pulze = 150
 max_pulse = 600
-pwm.set_pwm(channel, 0, max_pulse)
+pwm.channels[channel].=duty_cycle = max_pulse
 time.sleep(1)
 print("done")
