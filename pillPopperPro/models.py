@@ -11,7 +11,7 @@ class Pill(models.Model):
     quantity_initial = models.IntegerField()
     quantity_remaining = models.IntegerField()
     pill_slot = models.IntegerField(default=0)
-    slot_angle = models.IntegerField(default=0)
+    # slot_angle = models.IntegerField(default=0)
     taken_today = models.IntegerField(default=0)
     timezone = models.CharField(max_length=50, default="UTC")  
     image = models.ImageField(upload_to="pill_images/", null=True, blank=True, default="pill.jpeg")  
