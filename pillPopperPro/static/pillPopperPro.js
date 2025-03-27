@@ -50,7 +50,8 @@ function dispense_pill() {
         return;
     }
 
-    let data = { action: "release", slot: pillSlot };
+    // add in code for receiving the proper angle from the pill dispenser
+    let data = { action: "release", slot: pillSlot, angle: 180 };
     socket.send(JSON.stringify(data));
 
     const timestamp = new Date().toISOString();
