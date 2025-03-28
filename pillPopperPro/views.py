@@ -421,69 +421,63 @@ def register_action(request):
 
     return render(request, 'home.html', context)
 
-
-#basically this helps to render the dashboard 
 @login_required
 def dashboard(request):
     today = now().date()
+    #gpt used for seven day logic and shifting times
     last_7_days = [(today - timedelta(days=i)).strftime("%a %m/%d") for i in range(6, -1, -1)]
-    hours = [f"{h}:00" for h in range(24)]  
+    hours = [f"{h}:00" for h in range(24)]
 
-    
     pills = Pill.objects.filter(user=request.user)
     taken_times = []
     scheduled_times = []
     accuracy_stats = {}
 
-    #goes though each of the users pills
     for pill in pills:
         taken_datetimes = []
         correct_takes = 0
         total_scheduled = 0
-        pill_timezone = pytz.timezone(pill.timezone)  
-        #goes though each time and displays it calulating right time
-        #TODO: make sure those calculations are right 
+        pill_timezone = pytz.timezone(pill.timezone)
+
         for taken_time in pill.taken_times:
             dt = datetime.datetime.fromisoformat(taken_time)
-            dt2 = datetime.datetime.fromisoformat(taken_time).replace(tzinfo=pytz.utc).astimezone(pill_timezone)
+            dt2 = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)
             taken_datetimes.append(dt2)
-            
-            
-            dt = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone) 
 
-            day = dt.strftime("%a %m/%d")
-            hour = f"{dt.hour}:00"
-            time = dt.strftime("%I:%M %p %Z") 
+            day = dt2.strftime("%a %m/%d")
+            hour = f"{dt2.hour}:00"
+            time = dt2.strftime("%I:%M %p %Z")
 
             taken_times.append({
                 "day": day,
                 "hour": hour,
                 "name": pill.name,
                 "slot": pill.pill_slot,
-                "time": time  
+                "time": time
             })
-        
-        #This just makes a list of all the times the user was ment to take their medication
-        #and adds it to a big list again idk if the time calculations are right 
-        for day_offset in range(7):  
+
+        for day_offset in range(7):
             scheduled_date = today - timedelta(days=day_offset)
             formatted_day = scheduled_date.strftime("%a %m/%d")
-            pill_timezone = pytz.timezone(pill.timezone)
+            #from the stored user input
+            weekday_code = scheduled_date.strftime("%a").upper()[:2] 
+
+            #skips the day if not seen
+            if weekday_code not in pill.days_of_week:
+                continue 
 
             for disposal_time in pill.disposal_times:
                 time_obj = datetime.datetime.strptime(disposal_time, "%H:%M").time()
-                dt = datetime.datetime.combine(scheduled_date, time_obj)
-                dt = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)  
+                scheduled_dt = datetime.datetime.combine(scheduled_date, time_obj)
+                scheduled_dt = scheduled_dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)
 
-                hour = f"{dt.hour}:00"
-                time = dt.strftime("%I:%M %p %Z")
-                total_scheduled += 1  
+                hour = f"{scheduled_dt.hour}:00"
+                time = scheduled_dt.strftime("%I:%M %p %Z")
+                total_scheduled += 1
 
-
-                on_time = any(abs((dt - taken_dt).total_seconds()) <= 1800 for taken_dt in taken_datetimes)
-
+                on_time = any(abs((scheduled_dt - taken_dt).total_seconds()) <= 1800 for taken_dt in taken_datetimes)
                 if on_time:
-                    correct_takes += 1  
+                    correct_takes += 1
 
                 if not any(t["day"] == formatted_day and t["hour"] == hour and t["name"] == pill.name for t in taken_times):
                     scheduled_times.append({
@@ -493,18 +487,22 @@ def dashboard(request):
                         "slot": pill.pill_slot,
                         "time": time,
                     })
+
+        #calculates accuracy rendered at top
         accuracy = round((correct_takes / total_scheduled) * 100, 2) if total_scheduled > 0 else 0
         accuracy_stats[pill.name] = accuracy
 
+    #renders
     context = {
         "last_7_days": last_7_days,
         "hours": hours,
         "taken_times_json": json.dumps(taken_times),
         "scheduled_times_json": json.dumps(scheduled_times),
-        "accuracy_stats": accuracy_stats 
+        "accuracy_stats": accuracy_stats
     }
 
     return render(request, "pillDashboard.html", context)
+
 
 
 @login_required
