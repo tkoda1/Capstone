@@ -29,7 +29,7 @@ class PillPopperProConsumer(WebsocketConsumer):
 
         # self.user = self.scope["user"]
 
-        self.broadcast_data({})
+        self.broadcast_data({'action': 'connection'})
         # connect_to_server()
 
     def disconnect(self, close_code):

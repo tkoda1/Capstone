@@ -22,6 +22,8 @@ def on_message(ws, message):
         release_pill(data)
     elif data["action"] == "refill":
         refill_reminder(data)
+    elif data["action"] == "connection":
+        print('Success, received connection method')
     else:
         on_error(ws, f"Invalid action: {data['action']}")
 
