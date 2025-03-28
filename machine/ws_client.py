@@ -14,7 +14,7 @@ import servo, speaker
 
 def on_message(ws, message):
     print('RECEIVED MESAGE')
-    # print(f"Received message: {message}")
+    print(f"Received message: {message}")
     data = json.loads(message)
     if not data or not data["action"]:
         on_error(ws, "Invalid data sent")
