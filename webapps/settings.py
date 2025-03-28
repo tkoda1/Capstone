@@ -87,12 +87,13 @@ WSGI_APPLICATION = 'webapps.wsgi.application'
 ASGI_APPLICATION = 'webapps.asgi.application'
 
 CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": [("localhost", 6379)]
-            },
-        },
+    'default': {
+        # 'BACKEND': 'channels.layers.InMemoryChannelLayer'
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG':{
+          'hosts' : [("localhost", 6379), ('127.0.0.1', 6379)]
+        }
+    }
 }
 
 # Database
