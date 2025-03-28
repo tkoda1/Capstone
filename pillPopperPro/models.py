@@ -3,6 +3,17 @@ from django.db import models
 import datetime
 from django.contrib.auth.models import User
 
+DAYS_OF_WEEK = [
+    ('MO', 'Monday'),
+    ('TU', 'Tuesday'),
+    ('WE', 'Wednesday'),
+    ('TH', 'Thursday'),
+    ('FR', 'Friday'),
+    ('SA', 'Saturday'),
+    ('SU', 'Sunday'),
+]
+
+
 class Pill(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True) 
     name = models.CharField(max_length=200)
@@ -15,6 +26,7 @@ class Pill(models.Model):
     taken_today = models.IntegerField(default=0)
     timezone = models.CharField(max_length=50, default="UTC")  
     image = models.ImageField(upload_to="pill_images/", null=True, blank=True, default="pill.jpeg")  
+    days_of_week = models.JSONField(default=list)
 
     taken_times = models.JSONField(default=list)
 

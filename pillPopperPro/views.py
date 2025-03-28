@@ -259,8 +259,10 @@ def new_pill_form(request, slot_id):
                 'quantity_initial': existing_pill.quantity_initial,
                 'disposal_times': existing_pill.disposal_times,
                 'timezone': existing_pill.timezone,
+                'days_of_week': existing_pill.days_of_week,
                 'image': existing_pill.image
             }
+
             context['form'] = PillForm(initial=initial_data)
         except Pill.DoesNotExist:
             context['form'] = PillForm()
@@ -286,12 +288,14 @@ def new_pill_form(request, slot_id):
         name=form.cleaned_data['name'],
         dosage=form.cleaned_data['dosage'],
         disposal_times=form.cleaned_data['disposal_times'],
+        days_of_week=form.cleaned_data['days_of_week'],
         quantity_initial=form.cleaned_data['quantity_initial'],
         quantity_remaining=form.cleaned_data['quantity_initial'],
         pill_slot=slot_id,
         timezone=form.cleaned_data['timezone'],
         image=uploaded_image
     )
+
     new_pill.save()
 
     
@@ -304,24 +308,21 @@ def new_pill_form(request, slot_id):
         user_timezone = pytz.timezone(new_pill.timezone)  
 
         for time in form.cleaned_data['disposal_times']:
-            
-            naive_event_time = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(time, "%H:%M").time())
+            #make sure on day
+            for day in form.cleaned_data['days_of_week']:
+                naive_event_time = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(time, "%H:%M").time())
+                event_time = user_timezone.localize(naive_event_time)
 
-           
-            event_time = user_timezone.localize(naive_event_time)
+                event = {
+                    'summary': f"Take {new_pill.name}",
+                    'description': f"Dosage: {new_pill.dosage} mg",
+                    'start': {'dateTime': event_time.isoformat(), 'timeZone': new_pill.timezone},
+                    'end': {'dateTime': (event_time + datetime.timedelta(minutes=15)).isoformat(), 'timeZone': new_pill.timezone},
+                    'recurrence': [f'RRULE:FREQ=WEEKLY;BYDAY={",".join(form.cleaned_data["days_of_week"])}']
+                }
 
-            print(f"Event Time (localized to user timezone): {event_time}")
+                service.events().insert(calendarId='primary', body=event).execute()
 
-            
-            event = {
-                'summary': f"Take {new_pill.name}",
-                'description': f"Dosage: {new_pill.dosage} mg",
-                'start': {'dateTime': event_time.isoformat(), 'timeZone': pytz.timezone(new_pill.timezone).zone},
-                'end': {'dateTime': (event_time + datetime.timedelta(minutes=15)).isoformat(), 'timeZone': pytz.timezone(new_pill.timezone).zone},
-                'recurrence': ['RRULE:FREQ=DAILY'],
-            }
-
-            event = service.events().insert(calendarId='primary', body=event).execute()
 
     #name = 'pill_name' +  str(context['id'])
     #context[name] = form.cleaned_data['name']

@@ -22,12 +22,28 @@ COMMON_TIMEZONES = [
     'Australia/Sydney', 'Australia/Melbourne'
 ]
 
+DAYS_OF_WEEK = [
+    ('MO', 'Monday'),
+    ('TU', 'Tuesday'),
+    ('WE', 'Wednesday'),
+    ('TH', 'Thursday'),
+    ('FR', 'Friday'),
+    ('SA', 'Saturday'),
+    ('SU', 'Sunday'),
+]
+
 username_validator = RegexValidator(r'^[\w.@+-]+$', 'Enter a valid username.')
 
 class PillForm(forms.Form):
     name = forms.CharField(max_length=100)
     dosage = forms.IntegerField(min_value=1, max_value=9999)
     quantity_initial = forms.IntegerField(min_value=1)
+
+    days_of_week = forms.MultipleChoiceField(
+        choices=DAYS_OF_WEEK,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
 
     disposal_times = forms.MultipleChoiceField(
         choices=generate_time_choices(),
@@ -43,7 +59,8 @@ class PillForm(forms.Form):
 
     class Meta:
         model = Pill
-        fields = ('name', 'dosage', 'disposal_times', 'quantity_initial', 'pill_slot', 'image')
+        fields = ('name', 'dosage', 'disposal_times', 'days_of_week', 'quantity_initial', 'pill_slot', 'image')
+
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -66,11 +83,17 @@ class PillForm(forms.Form):
         if not disposal_times:
             raise forms.ValidationError("Please select at least one disposal time.")
         return disposal_times
+    
+    def clean_days_of_week(self):
+        days = self.cleaned_data.get('days_of_week', [])
+        if not days:
+            raise forms.ValidationError("Please select at least one day.")
+        return days
 
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=50, validators=[username_validator])
-    
+
     password = forms.CharField(min_length=8, max_length=128, widget=forms.PasswordInput())
 
     def clean(self):

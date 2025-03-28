@@ -23,6 +23,18 @@
         </div>
 
         <div class="form-group">
+            <label for="{{ form.days_of_week.id_for_label }}">Days of the Week:</label>
+            <div class="checkbox-container">
+                {% for checkbox in form.days_of_week %}
+                    <label class="checkbox-label">
+                        {{ checkbox.tag }} {{ checkbox.choice_label }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+        
+
+        <div class="form-group">
             <label for="{{ form.disposal_times.id_for_label }}">Disposal Times:</label>
             <div class="checkbox-container">
                 <div class="scrollable-checkbox-list">
