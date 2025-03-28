@@ -29,6 +29,7 @@ class PillPopperProConsumer(WebsocketConsumer):
 
         # self.user = self.scope["user"]
 
+        # enter in slots 1-6, will recalculate to 0-5 on rpi5
         self.broadcast_data({ 'action': "release", 'slot': 2, 'angle': 180 })
         # connect_to_server()
 
