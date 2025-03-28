@@ -1,6 +1,7 @@
 # https://pypi.org/project/websocket-client/
 # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html
 # pip install websocket-client
+# pip install rel
 
 import websocket
 from constants import WEBSOCKET_URL, LOAD_CELL_ERROR
@@ -12,7 +13,8 @@ import servo, speaker
 # import loadcell
 
 def on_message(ws, message):
-    print(f"Received message: {message}")
+    print('RECEIVED MESAGE')
+    # print(f"Received message: {message}")
     data = json.loads(message)
     if not data or not data["action"]:
         on_error(ws, "Invalid data sent")
@@ -24,12 +26,15 @@ def on_message(ws, message):
         on_error(ws, f"Invalid action: {data['action']}")
 
 def on_error(ws, error):
+    print('ERROR')
     print(error)
 
 def on_close(ws, close_status_code, close_msg):
+    print('CLOSING')
     print("### closed ###")
 
 def on_open(ws):
+    print('OPEN CONNECTION')
     print("Opened connection")
 
 def release_pill(data):
