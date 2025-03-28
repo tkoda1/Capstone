@@ -1,4 +1,4 @@
-WEBSOCKET_URL = "ws://pillpopperpro.com:80"
+WEBSOCKET_URL = "ws://18.223.133.87"
 RELEASE_PILL_PATH = "Sample.wav"
 REFILL_PILL_PATH = "Sample.wav"
 FINISH_DISPENSING_PATH = "Sample.wav"
