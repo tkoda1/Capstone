@@ -249,9 +249,24 @@ def pill_box(request):
 def new_pill_form(request, slot_id):
     context = {'id': slot_id}
 
+    #modified this so that previous pill informaiton is rendered 
     if request.method == 'GET':
-        context['form'] = PillForm()
+        try:
+            existing_pill = Pill.objects.get(user=request.user, pill_slot=slot_id)
+            initial_data = {
+                'name': existing_pill.name,
+                'dosage': existing_pill.dosage,
+                'quantity_initial': existing_pill.quantity_initial,
+                'disposal_times': existing_pill.disposal_times,
+                'timezone': existing_pill.timezone,
+                'image': existing_pill.image
+            }
+            context['form'] = PillForm(initial=initial_data)
+        except Pill.DoesNotExist:
+            context['form'] = PillForm()
+
         return render(request, 'newPillForm.html', context)
+
 
     form = PillForm(request.POST, request.FILES)
     context['form'] = form
