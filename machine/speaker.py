@@ -47,19 +47,19 @@ def play_not_dispensed():
 
 # pip install pydub
 
-import os
-from pydub import AudioSegment
-from pydub.playback import play
+# import os
+# from pydub import AudioSegment
+# from pydub.playback import play
 
-TEST_PATH = "audioAlerts/testAudio.wav"
+# TEST_PATH = "audioAlerts/testAudio.wav"
 
-# Check if file exists
-if os.path.exists(TEST_PATH):
-    test_audio = AudioSegment.from_file(file=TEST_PATH, format="wav")
-    print("File loaded successfully!")
-else:
-    print(f"Error: File '{TEST_PATH}' not found!")
+# # Check if file exists
+# if os.path.exists(TEST_PATH):
+#     test_audio = AudioSegment.from_file(file=TEST_PATH, format="wav")
+#     print("File loaded successfully!")
+# else:
+#     print(f"Error: File '{TEST_PATH}' not found!")
 
-test_audio = AudioSegment.from_file(file = TEST_PATH, 
-                                      format = "wav")
-play(test_audio)
+# test_audio = AudioSegment.from_file(file = TEST_PATH, 
+#                                       format = "wav")
+# play(test_audio)
