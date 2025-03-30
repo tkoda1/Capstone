@@ -57,7 +57,7 @@ def release_pill(data):
         return
     # initial_weight = loadcell.read_weight()
     # speaker.play_release_pill()
-    servo.dispense_pill(int(data["slot"])-1, int(data["angle"]))
+    servo.dispense_pill(int(data["slot"]), int(data["angle"]))
     # final_weight = loadcell.read_weight()
     # if (final_weight - initial_weight < LOAD_CELL_ERROR):
     #     on_error(f"Pill not dispensed initial: {initial_weight} final: {final_weight}")
