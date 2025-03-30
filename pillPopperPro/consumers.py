@@ -62,6 +62,10 @@ class PillPopperProConsumer(WebsocketConsumer):
             # send_message_to_server()
             self.broadcast_data(data)
             return
+        
+        if action == 'dispense':
+            print(f'Action dispense status {data['status']}')
+            return
 
         self.send_error(f'Invalid action property: "{action}"')
 
