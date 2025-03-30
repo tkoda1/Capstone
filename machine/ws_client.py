@@ -24,6 +24,9 @@ def on_message(ws, message):
         refill_reminder(data)
     elif data["action"] == "connection":
         print('Success, received connection method')
+    elif data["action"] == 'dipensed':
+        print("Receiving sent connection")
+        return
     else:
         on_error(ws, f"Invalid action: {data['action']}")
 
@@ -43,14 +46,14 @@ def release_pill(data):
     print("Releasing pill")
     if not data["slot"]:
         on_error(ws, "Invalid pill slot sent")
-        message = {'action': 'dispense',
+        message = {'action': 'dispensed',
                    'status': 'error',
                    'reason': 'invalid pill slot'}
         send_message(ws, message)
         return
     if not data["angle"]:
         on_error(ws, "Invalid angle sent")
-        message = {'action': 'dispense',
+        message = {'action': 'dispensed',
                    'status': 'error',
                    'reason': 'invalid angle slot'}
         send_message(ws, message)
@@ -62,13 +65,13 @@ def release_pill(data):
     # if (final_weight - initial_weight < LOAD_CELL_ERROR):
     #     on_error(f"Pill not dispensed initial: {initial_weight} final: {final_weight}")
     #     speaker.play_not_dispensed()
-    #     message = {'action': 'dispense',
+    #     message = {'action': 'dispensed',
     #                'status': 'error',
     #                'reason': 'bad weight reading'}
     #     send_message(ws, message)
     #     return
     # speaker.play_finish_dispensing()
-    message = {'action': 'dispense',
+    message = {'action': 'dispensed',
                'status': 'success'}
     send_message(ws, message)
 
