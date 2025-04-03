@@ -35,16 +35,18 @@ from .models import Pill, UserProfile
 @csrf_exempt
 @login_required
 def update_taken_times(request):
-    print("hi - view was triggered")
+    print('VIEWS.PY UPDATE TAKE TIMES FUNCTION')
+    # print("hi - view was triggered")
     if request.method == "POST":
+        print('VIEWS.PY UPDATE TAKE TIMES POST FUNCTION')
         data = json.loads(request.body)
         slot_id = int(data.get("slot"))
         timestamp = data.get("time")
-        print(f"Slot: {slot_id}, Timestamp: {timestamp}")
+        # print(f"Slot: {slot_id}, Timestamp: {timestamp}")
 
         try:
             pill = Pill.objects.get(user=request.user, pill_slot=slot_id)
-            print(f"Found Pill: {pill}")
+            # print(f"Found Pill: {pill}")
 
             timestamp_dt = datetime.datetime.fromisoformat(timestamp).replace(tzinfo=pytz.UTC)
             pill.taken_times.append(timestamp_dt.isoformat())
@@ -55,7 +57,7 @@ def update_taken_times(request):
             ]
 
             pill.save()
-            print(f"Updated times for Pill Slot {slot_id}: {pill.taken_times}")
+            # print(f"Updated times for Pill Slot {slot_id}: {pill.taken_times}")
 
             return JsonResponse({"status": "success", "taken_times": pill.taken_times})
         
@@ -161,31 +163,44 @@ def home_page(request):
 #get is just to render the general dispensal page. The logic is a little weird
 @login_required
 def dispense(request):
+    print('VIEWS.PY DISPENSE FUNCTION')
     if request.method == "POST":
-        print("heyyyy")
+        print('VIEWS.PY DISPENSE POST FUNCTION')
+        # print("heyyyy")
         data = json.loads(request.body)
         pill_slot = data.get("slot")
 
         try:
             pill = Pill.objects.get(user=request.user, pill_slot=pill_slot)
             print(pill.quantity_remaining)
+            print(pill.slot_angle)
 
             #weirdly always one off also need to add new notifcation about when empty 
             if pill.quantity_remaining > 0:
+                slot_angle = pill.slot_angle
                 pill.quantity_remaining -= 1
-                print(pill)
+                if slot_angle == 0:
+                    print('Updating angle from 0 to 180')
+                    pill.slot_angle = 180
+                else:
+                    print('Updating angle from 180 to 0')
+                    pill.slot_angle = 0
+                # print(pill)
                 pill.save()
                 #print(type(pill.quantity_remaining))
                 print(pill.quantity_remaining)
+                print(pill.slot_angle)
 
  
                 refill_warning = pill.quantity_remaining == 3
-                print(pill.quantity_remaining)
+                # print(pill.quantity_remaining)
 
                 return JsonResponse({
                     "success": True,
                     "quantity_remaining": pill.quantity_remaining,
-                    "refill_warning": refill_warning
+                    "refill_warning": refill_warning,
+                    "pill_slot": pill_slot,
+                    "slot_angle": slot_angle
                 })
                 
             else:

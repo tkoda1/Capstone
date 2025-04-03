@@ -38,7 +38,7 @@ function connect_to_server() {
 }
 
 // function dispense_pill(pill)
-function dispense_pill() {
+async function dispense_pill() {
     console.log("Called dispense_pill function");
     const pillImageElement = document.getElementById("id_pill_picture");
     const pillSlot = pillImageElement.getAttribute("data-slot");
@@ -50,13 +50,9 @@ function dispense_pill() {
         return;
     }
 
-    // add in code for receiving the proper angle from the pill dispenser
-    let data = { action: "release", slot: pillSlot, angle: 180 };
-    socket.send(JSON.stringify(data));
+    const timestamp = new Date().toISOString().replace("Z", "+00:00");
 
-    const timestamp = new Date().toISOString();
-
-    fetch("/dispense/", {
+    await fetch("/dispense/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -77,6 +73,12 @@ function dispense_pill() {
     .then(data => {
         console.log("Server Response:", data);
         if (data.success) {
+            // send message to ws to release 
+            console.log(data)
+            const slot_angle = data.slot_angle
+            let ws_message = { action: "release", slot: pillSlot, angle: slot_angle };
+            socket.send(JSON.stringify(ws_message));
+
             console.log(`Updated quantity_remaining: ${data.quantity_remaining}`);
             
             if (data.refill_warning) {
@@ -92,7 +94,7 @@ function dispense_pill() {
     
 
 
-    fetch("/update_taken_times/", {
+    await fetch("/update_taken_times/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
