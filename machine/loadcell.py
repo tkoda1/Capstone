@@ -59,12 +59,13 @@ calibration_factor = 2280  # You will need to calibrate your load cell and adjus
 def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    hx.set_reading_format("MSB", "MSB")
+    # Remove set_reading_format as it's not supported
     hx.set_reference_unit(calibration_factor)
     hx.reset()
     hx.tare()
 
 def read_weight():
+    # Returns weight, make sure to use the right number of readings for averaging
     weight = hx.get_weight(5)
     return weight
 
@@ -72,7 +73,7 @@ if __name__ == "__main__":
     setup()
     print('Testing load cell...')
     weight = read_weight()
-    print('Read weight {weight} grams')
+    print(f'Read weight {weight} grams')  # Corrected the print format
     time.sleep(1)
     GPIO.cleanup()
     time.sleep(1)
