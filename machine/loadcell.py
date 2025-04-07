@@ -1,21 +1,17 @@
-# https://pypi.org/project/hx711/
+# https://www.youtube.com/watch?v=FdFXlTdpueQ
 
+import RPi.GPIO as GPIO
 from hx711 import HX711
 
-try:
-    hx711 = HX711(
-        dout_pin=5,
-        pd_sck_pin=6,
-        channel='A',
-        gain=64
-    )
+GPIO.setmode(GPIO.BCM)
 
-    hx711.reset()   # Before we start, reset the HX711 (not obligate)
-    measures = hx711.get_raw_data(num_measures=3)
-finally:
-    GPIO.cleanup()  # always do a GPIO cleanup in your scripts!
+hx = HX711(dout_pin=6, pd_sck_pin=5)
 
-print("\n".join(measures))
+hx.zero()
+
+while True:
+    reading = hx.get_raw_data_mean()
+    print(reading)
 
 # # https://chatgpt.com/share/67dca560-2a58-8002-8556-78d4938bd12b
 
