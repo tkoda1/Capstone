@@ -1,39 +1,29 @@
-import RPi.GPIO as GPIO
-from hx711 import HX711
+# https://chatgpt.com/share/67f4049b-cb10-8000-851c-a615b98f2cc0
+
 import time
+from hx711 import HX711  # Use hx711py or the hx711.py file from the repo
 
-DOUT = 5
-SCK = 6 
+# GPIO pin setup (BCM numbering)
+DT_PIN = 5    # Replace with your actual pin
+SCK_PIN = 6   # Replace with your actual pin
 
-hx = HX711(DOUT, SCK)
+hx = HX711(DT_PIN, SCK_PIN)
 
-calibration_factor = 2280  # You will need to calibrate your load cell and adjust this value
+# Set scale ratio based on calibration (default for testing)
+hx.set_reading_format("MSB", "MSB")
+hx.set_reference_unit(1)  # Set later after calibration
 
-def setup():
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-    # Reset the HX711
-    hx.reset()
-    
-    # Read a few times to reset the scale (this is equivalent to taring it)
-    print("Taring the load cell...")
-    for _ in range(10):  # You can adjust the number of readings for taring
-        hx.read()  # Using `read()` method to simulate taring
-        time.sleep(0.1)  # Small delay to allow for stable readings
+hx.reset()
+hx.tare()
 
-def read_weight():
-    # Returns weight, make sure to use the right number of readings for averaging
-    weight = hx.read()
-    hx.power_down()
-    hx.power_up()
-    return weight
+print("Tare done. Place an object on the load cell...")
 
-if __name__ == "__main__":
-    setup()
-    print('Testing load cell...')
-    weight = read_weight()
-    print(f'Read weight {weight} grams')  # Corrected the print format
-    time.sleep(1)
-    GPIO.cleanup()
-    time.sleep(1)
-    print('Finished testing load cell')
+try:
+    while True:
+        weight = hx.get_weight(5)  # Average of 5 readings
+        print(f"Weight: {weight:.2f} units")
+        time.sleep(0.5)
+        hx.power_down()
+        hx.power_up()
+except KeyboardInterrupt:
+    print("Exiting...")
