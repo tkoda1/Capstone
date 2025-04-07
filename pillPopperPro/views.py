@@ -324,19 +324,18 @@ def new_pill_form(request, slot_id):
 
         for time in form.cleaned_data['disposal_times']:
             #make sure on day
-            for day in form.cleaned_data['days_of_week']:
-                naive_event_time = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(time, "%H:%M").time())
-                event_time = user_timezone.localize(naive_event_time)
+            naive_event_time = datetime.datetime.combine(datetime.date.today(), datetime.datetime.strptime(time, "%H:%M").time())
+            event_time = user_timezone.localize(naive_event_time)
 
-                event = {
-                    'summary': f"Take {new_pill.name}",
-                    'description': f"Dosage: {new_pill.dosage} mg",
-                    'start': {'dateTime': event_time.isoformat(), 'timeZone': new_pill.timezone},
-                    'end': {'dateTime': (event_time + datetime.timedelta(minutes=15)).isoformat(), 'timeZone': new_pill.timezone},
-                    'recurrence': [f'RRULE:FREQ=WEEKLY;BYDAY={",".join(form.cleaned_data["days_of_week"])}']
-                }
+            event = {
+                'summary': f"Take {new_pill.name}",
+                'description': f"Dosage: {new_pill.dosage} mg",
+                'start': {'dateTime': event_time.isoformat(), 'timeZone': new_pill.timezone},
+                'end': {'dateTime': (event_time + datetime.timedelta(minutes=15)).isoformat(), 'timeZone': new_pill.timezone},
+                'recurrence': [f'RRULE:FREQ=WEEKLY;BYDAY={",".join(form.cleaned_data["days_of_week"])}']
+            }
 
-                service.events().insert(calendarId='primary', body=event).execute()
+            service.events().insert(calendarId='primary', body=event).execute()
 
 
     #name = 'pill_name' +  str(context['id'])
