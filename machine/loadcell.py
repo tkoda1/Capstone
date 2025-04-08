@@ -6,7 +6,8 @@ from hx711 import HX711
 DT_PIN = 5
 SCK_PIN = 6
 
-hx = HX711(DT_PIN, SCK_PIN)
+hx = HX711(DT_PIN, SCK_PIN, gain=32)  # Force it to use Channel B
+
 
 hx.set_reading_format("MSB", "MSB")
 hx.set_reference_unit(1)  # Placeholder — update after calibration
