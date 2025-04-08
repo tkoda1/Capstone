@@ -1,6 +1,5 @@
 # https://chatgpt.com/share/67f5a57f-6140-8000-944d-e7f2a07be261
 
-
 import time
 from hx711 import HX711
 
@@ -13,10 +12,10 @@ hx.set_reading_format("MSB", "MSB")
 hx.set_reference_unit(1)  # Placeholder — update after calibration
 
 hx.reset()
-# hx.tare()  # Commented out for debugging
+# hx.tare()  # Comment this out to see raw values
 
-print("Reading raw value for sanity check:")
-print(hx.read_raw())
+print("Reading raw-ish value (averaged):")
+print(hx.read_average(times=10))
 
 print("Now reading weight:")
 try:
