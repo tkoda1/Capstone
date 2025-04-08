@@ -1,29 +1,28 @@
-# https://chatgpt.com/share/67f4049b-cb10-8000-851c-a615b98f2cc0
+# https://chatgpt.com/share/67f5a57f-6140-8000-944d-e7f2a07be261
+
 
 import time
-from hx711 import HX711  # Use hx711py or the hx711.py file from the repo
+from hx711 import HX711
 
-# GPIO pin setup (BCM numbering)
-DT_PIN = 5    # Replace with your actual pin
-SCK_PIN = 6   # Replace with your actual pin
+DT_PIN = 5
+SCK_PIN = 6
 
 hx = HX711(DT_PIN, SCK_PIN)
 
-# Set scale ratio based on calibration (default for testing)
 hx.set_reading_format("MSB", "MSB")
-hx.set_reference_unit(1)  # Set later after calibration
+hx.set_reference_unit(1)  # Placeholder — update after calibration
 
 hx.reset()
-hx.tare()
+# hx.tare()  # Commented out for debugging
 
-print("Tare done. Place an object on the load cell...")
+print("Reading raw value for sanity check:")
+print(hx.read_raw())
 
+print("Now reading weight:")
 try:
     while True:
-        weight = hx.get_weight(5)  # Average of 5 readings
+        weight = hx.get_weight(5)
         print(f"Weight: {weight:.2f} units")
         time.sleep(0.5)
-        hx.power_down()
-        hx.power_up()
 except KeyboardInterrupt:
     print("Exiting...")
