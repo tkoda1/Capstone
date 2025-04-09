@@ -51,13 +51,13 @@ def release_pill(data):
                    'reason': 'invalid pill slot'}
         send_message(ws, message)
         return
-    if not data["angle"]:
-        on_error(ws, "Invalid angle sent")
-        message = {'action': 'dispensed',
-                   'status': 'error',
-                   'reason': 'invalid angle slot'}
-        send_message(ws, message)
-        return
+    # if not data["angle"]:
+    #     on_error(ws, "Invalid angle sent")
+    #     message = {'action': 'dispensed',
+    #                'status': 'error',
+    #                'reason': 'invalid angle slot'}
+    #     send_message(ws, message)
+    #     return
     # initial_weight = loadcell.read_weight()
     # speaker.play_release_pill()
     servo.dispense_pill(int(data["slot"])-1, int(data["angle"]))
