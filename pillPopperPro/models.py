@@ -53,8 +53,14 @@ class Pill(models.Model):
         ]
 
 class UserProfile(models.Model):
+    ROLE_CHOICES = [
+        ('patient', 'Patient'),
+        ('caretaker', 'Caretaker'),
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     timezone = models.CharField(max_length=50, default="UTC")
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='patient')
 
     def __str__(self):
-        return f"{self.user.username} - {self.timezone}"
+        return f"{self.user.username} - {self.role} - {self.timezone}"

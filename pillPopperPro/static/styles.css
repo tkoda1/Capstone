@@ -383,13 +383,21 @@ form {
 }
 
 .homepage-container {
-    max-width: 500px;
-    margin: 50px auto;
+    width: 90%;
+    margin: 20px auto;
     padding: 30px;
     background: #f9f9f9;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
+}
+
+@media (min-width: 768px) {
+    .homepage-container {
+        max-width: 500px;
+        padding: 30px;
+        margin: 50px auto;
+    }
 }
 
 .homepage-title {

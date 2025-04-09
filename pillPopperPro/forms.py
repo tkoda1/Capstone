@@ -117,15 +117,12 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(max_length=254)
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
+    role = forms.ChoiceField(choices=[('patient', 'Patient'), ('caretaker', 'Caretaker')])  # new!
 
     def clean(self):
         cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
-
-        if password and confirm_password and password != confirm_password:
+        if cleaned_data.get('password') != cleaned_data.get('confirm_password'):
             raise forms.ValidationError("Passwords did not match.")
-
         return cleaned_data
 
     def clean_username(self):
@@ -133,3 +130,4 @@ class RegisterForm(forms.Form):
         if User.objects.filter(username__iexact=username).exists():
             raise forms.ValidationError("This username is not available.")
         return username
+

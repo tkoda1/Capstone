@@ -43,7 +43,7 @@ urlpatterns = [
     path('oauth2callback/', views.google_auth_callback, name='google_auth_callback'),
     path('update_timezone/', views.update_timezone, name='update_timezone'),
     path("update_taken_times/", views.update_taken_times, name="update_taken_times"),
-
+    path('patient-tracker/', views.patient_tracker, name='patient_tracker'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

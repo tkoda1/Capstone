@@ -413,27 +413,39 @@ def register_action(request):
         context['form'] = RegisterForm()
         return render(request, 'register.html', context)
 
-  
     form = RegisterForm(request.POST)
     context['form'] = form
 
     if not form.is_valid():
         return render(request, 'register.html', context)
 
-    new_user = User.objects.create_user(username=form.cleaned_data['username'], 
-                                        password=form.cleaned_data['password'],
-                                        email=form.cleaned_data['email'],
-                                        first_name=form.cleaned_data['first_name'],
-                                        last_name=form.cleaned_data['last_name'])
-    new_user.save()
+    # Create user
+    new_user = User.objects.create_user(
+        username=form.cleaned_data['username'], 
+        password=form.cleaned_data['password'],
+        email=form.cleaned_data['email'],
+        first_name=form.cleaned_data['first_name'],
+        last_name=form.cleaned_data['last_name']
+    )
 
+    # Save associated UserProfile
+    UserProfile.objects.create(
+        user=new_user,
+        role=form.cleaned_data['role'],
+        timezone="UTC"  # or let them select this later
+    )
+
+    # Login and redirect
     new_user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
-
     login(request, new_user)
-    context['name_of_user'] = form.cleaned_data['first_name'] +" " +form.cleaned_data['last_name']
 
-    return render(request, 'home.html', context)
+    role = form.cleaned_data['role']
+    if role == 'caretaker':
+        return redirect('patient_tracker') 
+    else:
+        return redirect('home')
+
 
 @login_required
 def dashboard(request):
@@ -542,3 +554,31 @@ def get_pills(request):
 @login_required
 def check_authentication(request):
     return JsonResponse({"user": request.user.username, "is_authenticated": request.user.is_authenticated})
+
+@login_required
+def patient_tracker(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+
+    if user_profile.role != 'caretaker':
+        return render(request, 'unauthorized.html', {'message': 'Access denied: not a caretaker.'})
+
+    context = {}
+
+    # Handle search
+    username_query = request.GET.get('username')
+    if username_query:
+        try:
+            patient_user = User.objects.get(username=username_query)
+            patient_profile = UserProfile.objects.get(user=patient_user)
+
+            if patient_profile.role != 'patient':
+                context['error'] = f"{username_query} is not registered as a patient."
+            else:
+                context['patient'] = patient_user
+
+        except User.DoesNotExist:
+            context['error'] = f"No user found with username: {username_query}"
+        except UserProfile.DoesNotExist:
+            context['error'] = f"{username_query} does not have a profile set up."
+
+    return render(request, 'patientTracker.html', context)
