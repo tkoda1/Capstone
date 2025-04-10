@@ -4,7 +4,7 @@ from hx711 import HX711
 DT_PIN = 5
 SCK_PIN = 6
 
-hx = HX711(dout_pin=DT_PIN, pd_sck_pin=SCK_PIN)
+hx = HX711(DT_PIN, SCK_PIN)
 hx.reset()
 hx.zero()
 
