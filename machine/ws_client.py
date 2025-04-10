@@ -51,6 +51,8 @@ def release_pill(data):
                    'reason': 'invalid pill slot'}
         send_message(ws, message)
         return
+    
+    # FIX IF DIDN'T MOVE THEN IT NEEDS TO GO TO 180 ON RESET
     # if not data["angle"]:
     #     on_error(ws, "Invalid angle sent")
     #     message = {'action': 'dispensed',
@@ -74,6 +76,12 @@ def release_pill(data):
     message = {'action': 'dispensed',
                'status': 'success'}
     send_message(ws, message)
+
+def weight_difference(w1, w2):
+    if (w2 - w1 < LOAD_CELL_ERROR):
+        on_error(f"Pill not dispensed initial: {w1} final: {w2}")
+        return False
+    return True
 
 def refill_reminder(data):
     print("Refill reminder")

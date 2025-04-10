@@ -1,28 +1,23 @@
-# https://chatgpt.com/share/67f5a57f-6140-8000-944d-e7f2a07be261
-
 import time
 from hx711 import HX711
 
 DT_PIN = 5
 SCK_PIN = 6
 
-hx = HX711(DT_PIN, SCK_PIN, gain=32)  # Force it to use Channel B
-
-
-hx.set_reading_format("MSB", "MSB")
-hx.set_reference_unit(1)  # Placeholder — update after calibration
-
+hx = HX711(dout_pin=DT_PIN, pd_sck_pin=SCK_PIN)
 hx.reset()
-# hx.tare()  # Comment this out to see raw values
+hx.zero()
 
 print("Reading raw-ish value (averaged):")
-print(hx.read_average(times=10))
+print(hx.get_raw_data_mean())
 
 print("Now reading weight:")
 try:
     while True:
-        weight = hx.get_weight(5)
+        weight = hx.get_weight_mean(5)
         print(f"Weight: {weight:.2f} units")
         time.sleep(0.5)
 except KeyboardInterrupt:
     print("Exiting...")
+    hx.power_down()
+    hx.cleanup()

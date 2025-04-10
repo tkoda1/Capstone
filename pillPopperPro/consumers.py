@@ -66,6 +66,7 @@ class PillPopperProConsumer(WebsocketConsumer):
             return
         
         if action == 'dispensed':
+            # store the new dispensed angle here into the model
             print(f"Action dispense status {data['status']}")
             return
 
