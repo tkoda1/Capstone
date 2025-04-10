@@ -1,25 +1,21 @@
-# hx711.py
-# https://chatgpt.com/share/67f84ea9-6f64-8000-91a1-147f733ab669
+# https://chatgpt.com/share/67f85111-754c-8000-b1ac-096d6783ee33
 
-import time
 import lgpio
+import time
 
 class HX711:
-    def __init__(self, dout, pd_sck, gain=128):
-        self.dout = dout
-        self.pd_sck = pd_sck
+    def __init__(self, dout_pin, pd_sck_pin, gain=128):
+        self.dout_pin = dout_pin
+        self.pd_sck_pin = pd_sck_pin
         self.gain = gain
+
+        self.lgpio_handle = lgpio.gpiochip_open(0)
+        lgpio.gpio_claim_input(self.lgpio_handle, self.dout_pin)
+        lgpio.gpio_claim_output(self.lgpio_handle, self.pd_sck_pin)
+
         self.offset = 0
         self.scale = 1
-
-        self.h = lgpio.gpiochip_open(0)  # Open the default GPIO chip
-        lgpio.gpio_claim_input(self.h, self.dout)
-        lgpio.gpio_claim_output(self.h, self.pd_sck)
-
         self.set_gain()
-
-    def is_ready(self):
-        return lgpio.gpio_read(self.h, self.dout) == 0
 
     def set_gain(self):
         if self.gain == 128:
@@ -28,45 +24,61 @@ class HX711:
             self.GAIN = 3
         elif self.gain == 32:
             self.GAIN = 2
-        lgpio.gpio_write(self.h, self.pd_sck, 0)
+
+        # wake up HX711
+        lgpio.gpio_write(self.lgpio_handle, self.pd_sck_pin, 0)
         self.read_raw()
+
+    def is_ready(self):
+        return lgpio.gpio_read(self.lgpio_handle, self.dout_pin) == 0
 
     def read_raw(self):
         while not self.is_ready():
             time.sleep(0.001)
 
-        count = 0
+        data = 0
         for _ in range(24):
-            lgpio.gpio_write(self.h, self.pd_sck, 1)
-            count = count << 1 | lgpio.gpio_read(self.h, self.dout)
-            lgpio.gpio_write(self.h, self.pd_sck, 0)
+            lgpio.gpio_write(self.lgpio_handle, self.pd_sck_pin, 1)
+            data = data << 1
+            lgpio.gpio_write(self.lgpio_handle, self.pd_sck_pin, 0)
+            if lgpio.gpio_read(self.lgpio_handle, self.dout_pin):
+                data += 1
 
-        # Set gain
         for _ in range(self.GAIN):
-            lgpio.gpio_write(self.h, self.pd_sck, 1)
-            lgpio.gpio_write(self.h, self.pd_sck, 0)
+            lgpio.gpio_write(self.lgpio_handle, self.pd_sck_pin, 1)
+            lgpio.gpio_write(self.lgpio_handle, self.pd_sck_pin, 0)
 
-        # Convert from 2's complement
-        if count & 0x800000:
-            count |= ~0xffffff
+        if data & 0x800000:
+            data |= ~0xffffff
 
-        return count
+        return data
 
     def read_average(self, times=3):
-        sum_val = 0
-        for _ in range(times):
-            sum_val += self.read_raw()
-        return sum_val / times
+        values = [self.read_raw() for _ in range(times)]
+        return sum(values) / len(values)
+
+    def get_raw_data_mean(self, times=3):
+        return self.read_average(times)
+
+    def get_weight_mean(self, times=3):
+        value = self.read_average(times)
+        return (value - self.offset) / self.scale
 
     def tare(self, times=15):
         self.offset = self.read_average(times)
 
-    def get_weight(self, times=3):
-        value = self.read_average(times)
-        return (value - self.offset) / self.scale
-
     def set_scale(self, scale):
         self.scale = scale
 
+    def reset(self):
+        self.set_gain()
+
+    def zero(self):
+        self.tare()
+
+    def power_down(self):
+        lgpio.gpio_write(self.lgpio_handle, self.pd_sck_pin, 0)
+        lgpio.gpio_write(self.lgpio_handle, self.pd_sck_pin, 1)
+
     def cleanup(self):
-        lgpio.gpiochip_close(self.h)
+        lgpio.gpiochip_close(self.lgpio_handle)
