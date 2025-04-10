@@ -7,7 +7,7 @@ DT_PIN = 5
 SCK_PIN = 6
 
 hx = HX711(DT_PIN, SCK_PIN)
-hx.reset()
+# hx.reset()
 hx.zero()
 
 print("Reading raw-ish value (averaged):")
