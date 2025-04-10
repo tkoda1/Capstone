@@ -1,3 +1,5 @@
+# https://chatgpt.com/share/67f838f5-88b0-8000-88a2-48a3be3861d8
+
 import time
 from hx711 import HX711
 
