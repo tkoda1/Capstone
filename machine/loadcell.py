@@ -23,7 +23,7 @@ try:
         if len(readings) > 10:
             readings.pop(0)
         average_weight = sum(readings) / len(readings)
-        print(f"Weight: {Average_weight:.2f} units")
+        print(f"Weight: {average_weight:.2f} units")
         time.sleep(0.5)
 except KeyboardInterrupt:
     print("Exiting...")
