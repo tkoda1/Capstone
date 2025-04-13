@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: auto; padding: 30px;">
+    <h2>Patient Tracker</h2>
+
+    <form method="GET" action="{% url 'patient_tracker' %}">
+        <label for="username">Search for a patient by username:</label><br>
+        <input type="text" name="username" id="username" placeholder="Enter username" value="{{ request.GET.username|default:'' }}" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    {% if patient %}
+        <hr>
+        <h3>Patient Profile: {{ patient.username }}</h3>
+        <p>Name: {{ patient.get_full_name }}</p>
+        <p>Email: {{ patient.email }}</p>
+
+        <a href="{% url 'patient_dashboard' patient.username %}" class="button">View Pill Dashboard</a>
+    {% endif %}
+
+
+</div>
+{% endblock %}

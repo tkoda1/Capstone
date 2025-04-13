@@ -44,6 +44,8 @@ urlpatterns = [
     path('update_timezone/', views.update_timezone, name='update_timezone'),
     path("update_taken_times/", views.update_taken_times, name="update_taken_times"),
     path('patient-tracker/', views.patient_tracker, name='patient_tracker'),
+    path('patient-dashboard/<str:username>/', views.patient_dashboard, name='patient_dashboard'),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

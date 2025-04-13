@@ -155,7 +155,13 @@ def get_google_calendar_service(request):
 #Renders home page
 @login_required
 def home_page(request):
-    return render(request, 'home.html', {})
+    user_profile = UserProfile.objects.get(user=request.user)
+
+    if user_profile.role == 'caretaker':
+        return redirect('patient_tracker')
+    else:
+        return render(request, 'home.html')
+
 
 
 #This is the functionalitu for the dispense page
@@ -373,6 +379,8 @@ def logout_view(request):
 
 
 #from web app
+
+
 def login_action(request):
     context = {}
 
@@ -380,7 +388,6 @@ def login_action(request):
         context['form'] = LoginForm()
         return render(request, 'login.html', context)
 
-  
     form = LoginForm(request.POST)
     context['form'] = form
 
@@ -388,22 +395,26 @@ def login_action(request):
         context['error'] = forms.ValidationError("Invalid username/password")
         return render(request, 'login.html', context)
 
-
     new_user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
 
     if new_user is not None:
         login(request, new_user)
-        first_name = new_user.first_name
+        context['name_of_user'] = new_user.first_name + " " + new_user.last_name
         context['globalField'] = forms.CharField(max_length=20)
-        user_name1 = User.objects.get(username=form.cleaned_data['username'])
-        #context['name_of_user'] = 
-        context['name_of_user'] = new_user.first_name + " " + new_user.last_name 
-    
+
+        try:
+            user_profile = UserProfile.objects.get(user=new_user)
+            if user_profile.role == 'caretaker':
+                return redirect('patient_tracker')
+        except UserProfile.DoesNotExist:
+            pass  
+
         return render(request, 'home.html', context)
     else:
         context['error'] = forms.ValidationError("Invalid username/password")
         return render(request, 'login.html', context)
+
     
 #from web app
 def register_action(request):
@@ -418,8 +429,7 @@ def register_action(request):
 
     if not form.is_valid():
         return render(request, 'register.html', context)
-
-    # Create user
+    
     new_user = User.objects.create_user(
         username=form.cleaned_data['username'], 
         password=form.cleaned_data['password'],
@@ -428,14 +438,13 @@ def register_action(request):
         last_name=form.cleaned_data['last_name']
     )
 
-    # Save associated UserProfile
+
     UserProfile.objects.create(
         user=new_user,
         role=form.cleaned_data['role'],
-        timezone="UTC"  # or let them select this later
+        timezone="UTC"  
     )
 
-    # Login and redirect
     new_user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
     login(request, new_user)
@@ -444,7 +453,7 @@ def register_action(request):
     if role == 'caretaker':
         return redirect('patient_tracker') 
     else:
-        return redirect('home')
+        return redirect('root')
 
 
 @login_required
@@ -551,9 +560,11 @@ def get_pills(request):
 
 
 
+
 @login_required
 def check_authentication(request):
     return JsonResponse({"user": request.user.username, "is_authenticated": request.user.is_authenticated})
+
 
 @login_required
 def patient_tracker(request):
@@ -564,7 +575,6 @@ def patient_tracker(request):
 
     context = {}
 
-    # Handle search
     username_query = request.GET.get('username')
     if username_query:
         try:
@@ -582,3 +592,99 @@ def patient_tracker(request):
             context['error'] = f"{username_query} does not have a profile set up."
 
     return render(request, 'patientTracker.html', context)
+
+@login_required
+def patient_dashboard(request, username):
+    user_profile = UserProfile.objects.get(user=request.user)
+
+    if user_profile.role != 'caretaker':
+        return render(request, 'unauthorized.html', {'message': 'Access denied: not a caretaker.'})
+
+    try:
+        patient_user = User.objects.get(username=username)
+        patient_profile = UserProfile.objects.get(user=patient_user)
+
+        if patient_profile.role != 'patient':
+            return render(request, 'unauthorized.html', {'message': f"{username} is not a patient."})
+
+        context = get_pill_dashboard_context(patient_user)
+        context['patient'] = patient_user
+        return render(request, 'pillDashboard.html', context)
+
+    except User.DoesNotExist:
+        return render(request, 'unauthorized.html', {'message': f"No user found: {username}"})
+
+
+def get_pill_dashboard_context(user):
+    today = now().date()
+    last_7_days = [(today - datetime.timedelta(days=i)).strftime("%a %m/%d") for i in range(6, -1, -1)]
+    hours = [f"{h}:00" for h in range(24)]
+
+    pills = Pill.objects.filter(user=user)
+    taken_times = []
+    scheduled_times = []
+    accuracy_stats = {}
+
+    for pill in pills:
+        taken_datetimes = []
+        correct_takes = 0
+        total_scheduled = 0
+        pill_timezone = pytz.timezone(pill.timezone)
+
+        for taken_time in pill.taken_times:
+            dt = datetime.datetime.fromisoformat(taken_time)
+            dt2 = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)
+            taken_datetimes.append(dt2)
+
+            day = dt2.strftime("%a %m/%d")
+            hour = f"{dt2.hour}:00"
+            time = dt2.strftime("%I:%M %p %Z")
+
+            taken_times.append({
+                "day": day,
+                "hour": hour,
+                "name": pill.name,
+                "slot": pill.pill_slot,
+                "time": time
+            })
+
+        for day_offset in range(7):
+            scheduled_date = today - datetime.timedelta(days=day_offset)
+            formatted_day = scheduled_date.strftime("%a %m/%d")
+            weekday_code = scheduled_date.strftime("%a").upper()[:2] 
+
+            if weekday_code not in pill.days_of_week:
+                continue
+
+            for disposal_time in pill.disposal_times:
+                time_obj = datetime.datetime.strptime(disposal_time, "%H:%M").time()
+                scheduled_dt = datetime.datetime.combine(scheduled_date, time_obj)
+                scheduled_dt = scheduled_dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)
+
+                hour = f"{scheduled_dt.hour}:00"
+                time = scheduled_dt.strftime("%I:%M %p %Z")
+                total_scheduled += 1
+
+                on_time = any(abs((scheduled_dt - taken_dt).total_seconds()) <= 1800 for taken_dt in taken_datetimes)
+                if on_time:
+                    correct_takes += 1
+
+                if not any(t["day"] == formatted_day and t["hour"] == hour and t["name"] == pill.name for t in taken_times):
+                    scheduled_times.append({
+                        "day": formatted_day,
+                        "hour": hour,
+                        "name": pill.name,
+                        "slot": pill.pill_slot,
+                        "time": time,
+                    })
+
+        accuracy = round((correct_takes / total_scheduled) * 100, 2) if total_scheduled > 0 else 0
+        accuracy_stats[pill.name] = accuracy
+
+    return {
+        "last_7_days": last_7_days,
+        "hours": hours,
+        "taken_times_json": json.dumps(taken_times),
+        "scheduled_times_json": json.dumps(scheduled_times),
+        "accuracy_stats": accuracy_stats
+    }
