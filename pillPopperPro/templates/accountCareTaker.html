@@ -1,0 +1,78 @@
+
+<!doctype html>
+<html class="top">
+	<head  class="head_div" style="background-color:powderblue;">
+	    <meta charset="utf-8">
+        {% load static %}
+          
+            <script src="{% static 'pillPopperPro.js' %}" type="text/javascript"></script>
+            
+		   
+            <link rel="stylesheet" href="{% static 'styles.css' %}">
+	</head>
+
+	<body>
+        <div class="navDropDown">
+            <select id="navigation-dropdown" onchange="navigateToPage()">
+                <option value="">Select an option</option>
+                <option value="{% url 'patient_tracker' %}">patient_tracker</option>
+                <option value="{% url 'account_caretaker' %}">Account</option>
+            </select>
+        </div>
+
+        <script>
+            function navigateToPage() {
+                var dropdown = document.getElementById("navigation-dropdown");
+                var selectedValue = dropdown.value;
+                if (selectedValue) {
+                    window.location.href = selectedValue;
+                }
+            }
+            window.onload = pill_schedule;
+            window.setInterval(pill_schedule, 60000);
+        </script>
+
+        <div class="container3">
+            <div class="account-box">
+                <h2 class="account-title">Caretaker Account</h2>
+
+                <div class="user-info">
+                    <p><strong>Username:</strong> {{ request.user.username }}</p>
+                    <p><strong>Email:</strong> {{ request.user.email }}</p>
+                </div>
+
+                <hr class="divider">
+
+                <h3 class="section-title">Assigned Patients</h3>
+                {% if patients %}
+                    <ul>
+                        {% for patient in patients %}
+                            <li>{{ patient.get_full_name }} ({{ patient.username }})</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No patients assigned to you yet.</p>
+                {% endif %}
+
+                {% if request.user.is_authenticated and request.user.socialaccount_set.all %}
+                    <p class="warning-text">
+                        You signed in with Google. Click logout, then <a href="https://accounts.google.com/logout" class="external-link">log out from Google</a> to fully disconnect.
+                    </p>
+                {% endif %}
+
+                <hr class="divider">
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn logout-btn">Logout</button>
+                </form>
+            </div>
+        </div>
+            
+
+
+	    
+
+       
+	</body>
+
+</html>

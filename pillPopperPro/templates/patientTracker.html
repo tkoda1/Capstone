@@ -16,12 +16,23 @@
             <select id="navigation-dropdown" onchange="navigateToPage()">
                 <option value="">Select an option</option>
                 <option value="{% url 'patient_tracker' %}">patient_tracker</option>
-                <option value="{% url 'account' %}">Account</option>
+                <option value="{% url 'account_caretaker' %}">Account</option>
             </select>
         </div>
+
+        <script>
+            function navigateToPage() {
+                var dropdown = document.getElementById("navigation-dropdown");
+                var selectedValue = dropdown.value;
+                if (selectedValue) {
+                    window.location.href = selectedValue;
+                }
+            }
+            window.onload = pill_schedule;
+            window.setInterval(pill_schedule, 60000);
+        </script>
     
 
-    
 
 	    <div class="content">
 		    <div class="container" style="max-width: 600px; margin: auto; padding: 30px;">
@@ -45,6 +56,17 @@
             
                     <a href="{% url 'patient_dashboard' patient.username %}" class="button">View Pill Dashboard</a>
                 {% endif %}
+
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <p class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                                {{ message }}
+                            </p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
             
             
             </div>

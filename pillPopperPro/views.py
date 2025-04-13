@@ -630,21 +630,24 @@ def patient_dashboard(request, username):
     caretaker_profile = UserProfile.objects.get(user=request.user)
 
     if caretaker_profile.role != 'caretaker':
-        return render(request, 'unauthorized.html', {'message': 'Access denied: not a caretaker.'})
+        messages.error(request, 'Access denied: not a caretaker.')
+        return redirect('patient_tracker')
 
     try:
         patient_user = User.objects.get(username=username)
         patient_profile = UserProfile.objects.get(user=patient_user)
 
         if caretaker_profile.user not in patient_profile.caretakers.all():
-            return render(request, 'unauthorized.html', {'message': f"You are not assigned to {username}."})
+            messages.error(request, f"You are not assigned to view {username}'s dashboard.")
+            return redirect('patient_tracker')
 
         context = get_pill_dashboard_context(patient_user)
         context['patient'] = patient_user
         return render(request, 'pillDashboard.html', context)
 
     except User.DoesNotExist:
-        return render(request, 'unauthorized.html', {'message': f"No user found: {username}"})
+        messages.error(request, f"No user found with username: {username}")
+        return redirect('patient_tracker')
 
 
 
@@ -721,3 +724,18 @@ def get_pill_dashboard_context(user):
         "scheduled_times_json": json.dumps(scheduled_times),
         "accuracy_stats": accuracy_stats
     }
+
+@login_required
+def account_caretaker(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+
+    if user_profile.role != 'caretaker':
+        messages.error(request, "You are not authorized to view this page.")
+        return redirect('account')
+
+    patients = request.user.patients.all()
+
+    return render(request, 'accountCareTaker.html', {
+        'user_profile': user_profile,
+        'patients': patients
+    })
