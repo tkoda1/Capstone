@@ -157,7 +157,8 @@ def get_google_calendar_service(request):
 #Renders home page
 @login_required
 def home_page(request):
-    user_profile = UserProfile.objects.get(user=request.user)
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+
 
     if user_profile.role == 'caretaker':
         return redirect('patient_tracker')

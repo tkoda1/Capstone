@@ -38,11 +38,7 @@
             </p>
         {% endif %}
 
-        <hr class="divider">
-        <h3 class="section-title">Device Connection</h3>
-        <p>Bluetooth Status: <span id="bluetooth-status">Checking...</span></p>
-        <button onclick="checkBluetooth()" class="btn check-btn">Check Bluetooth</button>
-
+       
         <hr class="divider">
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
@@ -51,24 +47,5 @@
     </div>
 </div>
 
-<script>
-    async function checkBluetooth() {
-        const statusElement = document.getElementById("bluetooth-status");
-        if (!navigator.bluetooth) {
-            statusElement.innerText = "Bluetooth not supported in your browser.";
-            return;
-        }
-        try {
-            const device = await navigator.bluetooth.requestDevice({
-                acceptAllDevices: true,
-                optionalServices: ['battery_service']
-            });
-            statusElement.innerText = "Connected to: " + device.name;
-        } catch (error) {
-            statusElement.innerText = "Bluetooth check failed: " + error.message;
-        }
-    }
-    window.onload = checkBluetooth;
-</script>
 
 {% endblock %}
