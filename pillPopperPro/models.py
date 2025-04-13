@@ -59,8 +59,10 @@ class UserProfile(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    timezone = models.CharField(max_length=50, default="UTC")
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='patient')
 
+    caretakers = models.ManyToManyField(User, related_name='patients', blank=True)
+
     def __str__(self):
-        return f"{self.user.username} - {self.role} - {self.timezone}"
+        return f"{self.user.username} - {self.role}"
+

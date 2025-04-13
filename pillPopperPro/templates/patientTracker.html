@@ -1,28 +1,56 @@
-{% extends "base.html" %}
 
-{% block content %}
-<div class="container" style="max-width: 600px; margin: auto; padding: 30px;">
-    <h2>Patient Tracker</h2>
+<!doctype html>
+<html class="top">
+	<head  class="head_div" style="background-color:powderblue;">
+	    <meta charset="utf-8">
+        {% load static %}
+          
+            <script src="{% static 'pillPopperPro.js' %}" type="text/javascript"></script>
+            
+		   
+            <link rel="stylesheet" href="{% static 'styles.css' %}">
+	</head>
 
-    <form method="GET" action="{% url 'patient_tracker' %}">
-        <label for="username">Search for a patient by username:</label><br>
-        <input type="text" name="username" id="username" placeholder="Enter username" value="{{ request.GET.username|default:'' }}" required>
-        <button type="submit">Search</button>
-    </form>
+	<body>
+        <div class="navDropDown">
+            <select id="navigation-dropdown" onchange="navigateToPage()">
+                <option value="">Select an option</option>
+                <option value="{% url 'patient_tracker' %}">patient_tracker</option>
+                <option value="{% url 'account' %}">Account</option>
+            </select>
+        </div>
+    
 
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
+    
 
-    {% if patient %}
-        <hr>
-        <h3>Patient Profile: {{ patient.username }}</h3>
-        <p>Name: {{ patient.get_full_name }}</p>
-        <p>Email: {{ patient.email }}</p>
+	    <div class="content">
+		    <div class="container" style="max-width: 600px; margin: auto; padding: 30px;">
+                <h2>Patient Tracker</h2>
+            
+                <form method="GET" action="{% url 'patient_tracker' %}">
+                    <label for="username">Search for a patient by username:</label><br>
+                    <input type="text" name="username" id="username" placeholder="Enter username" value="{{ request.GET.username|default:'' }}" required>
+                    <button type="submit">Search</button>
+                </form>
+            
+                {% if error %}
+                    <p style="color: red;">{{ error }}</p>
+                {% endif %}
+            
+                {% if patient %}
+                    <hr>
+                    <h3>Patient Profile: {{ patient.username }}</h3>
+                    <p>Name: {{ patient.get_full_name }}</p>
+                    <p>Email: {{ patient.email }}</p>
+            
+                    <a href="{% url 'patient_dashboard' patient.username %}" class="button">View Pill Dashboard</a>
+                {% endif %}
+            
+            
+            </div>
+		</div>
 
-        <a href="{% url 'patient_dashboard' patient.username %}" class="button">View Pill Dashboard</a>
-    {% endif %}
+       
+	</body>
 
-
-</div>
-{% endblock %}
+</html>

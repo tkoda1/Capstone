@@ -45,6 +45,7 @@ urlpatterns = [
     path("update_taken_times/", views.update_taken_times, name="update_taken_times"),
     path('patient-tracker/', views.patient_tracker, name='patient_tracker'),
     path('patient-dashboard/<str:username>/', views.patient_dashboard, name='patient_dashboard'),
+    path('add-caretaker/', views.add_caretaker, name='add_caretaker'),
 
 ]
 

@@ -23,6 +23,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from pillPopperPro.forms import LoginForm, RegisterForm
 from social_django.utils import load_strategy
+from django.contrib import messages
+from django.contrib.auth.models import User
 
 from .forms import PillForm
 from .models import Pill, UserProfile
@@ -365,10 +367,41 @@ def new_pill_form(request, slot_id):
 
 #@login_required
 
+
+
+@login_required
+def add_caretaker(request):
+    if request.method == 'POST':
+        username = request.POST.get('caretaker_username')
+        try:
+            caretaker = User.objects.get(username=username)
+            caretaker_profile = UserProfile.objects.get(user=caretaker)
+
+            if caretaker_profile.role != 'caretaker':
+                messages.error(request, f"{username} is not a registered caretaker.")
+            else:
+                patient_profile = UserProfile.objects.get(user=request.user)
+                patient_profile.caretakers.add(caretaker)
+                messages.success(request, f"{username} added as a caretaker.")
+
+        except User.DoesNotExist:
+            messages.error(request, f"No user with username: {username}")
+        except UserProfile.DoesNotExist:
+            messages.error(request, f"{username} does not have a profile.")
+
+    return redirect('account')
+
+
 @login_required
 def account(request):
-    """Renders the account page."""
-    return render(request, 'account.html', {})
+    user_profile = UserProfile.objects.get(user=request.user)
+    caretakers = user_profile.caretakers.all() if user_profile.role == 'patient' else []
+
+    return render(request, 'account.html', {
+        'user_profile': user_profile,
+        'caretakers': caretakers
+    })
+
 
 
 @login_required
@@ -442,7 +475,6 @@ def register_action(request):
     UserProfile.objects.create(
         user=new_user,
         role=form.cleaned_data['role'],
-        timezone="UTC"  
     )
 
     new_user = authenticate(username=form.cleaned_data['username'],
@@ -595,17 +627,17 @@ def patient_tracker(request):
 
 @login_required
 def patient_dashboard(request, username):
-    user_profile = UserProfile.objects.get(user=request.user)
+    caretaker_profile = UserProfile.objects.get(user=request.user)
 
-    if user_profile.role != 'caretaker':
+    if caretaker_profile.role != 'caretaker':
         return render(request, 'unauthorized.html', {'message': 'Access denied: not a caretaker.'})
 
     try:
         patient_user = User.objects.get(username=username)
         patient_profile = UserProfile.objects.get(user=patient_user)
 
-        if patient_profile.role != 'patient':
-            return render(request, 'unauthorized.html', {'message': f"{username} is not a patient."})
+        if caretaker_profile.user not in patient_profile.caretakers.all():
+            return render(request, 'unauthorized.html', {'message': f"You are not assigned to {username}."})
 
         context = get_pill_dashboard_context(patient_user)
         context['patient'] = patient_user
@@ -613,6 +645,7 @@ def patient_dashboard(request, username):
 
     except User.DoesNotExist:
         return render(request, 'unauthorized.html', {'message': f"No user found: {username}"})
+
 
 
 def get_pill_dashboard_context(user):

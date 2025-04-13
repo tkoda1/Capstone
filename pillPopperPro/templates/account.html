@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
 {% block content %}
+
 <div class="container3">
     <div class="account-box">
         <h2 class="account-title">Your Account</h2>
@@ -12,23 +12,25 @@
 
         <hr class="divider">
 
-        <h3 class="section-title">Manage Medications</h3>
-        <p class="description">If you logged in with google your medication schedule will be added to your Google Calendar automatically.</p>
+        {% if user_profile.role == 'patient' %}
+            <h3 class="section-title">Add Caretaker</h3>
+            <form method="POST" action="{% url 'add_caretaker' %}">
+                {% csrf_token %}
+                <label for="caretaker_username">Caretaker's Username:</label>
+                <input type="text" name="caretaker_username" id="caretaker_username" required>
+                <button type="submit" class="btn save-btn">Add Caretaker</button>
+            </form>
 
-        <form method="post" action="{% url 'update_timezone' %}" class="timezone-form">
-            {% csrf_token %}
-            <label for="timezone">Set Your Timezone:</label>
-            <select id="timezone" name="timezone">
-                <option value="UTC" {% if user_profile.timezone == "UTC" %}selected{% endif %}>UTC</option>
-                <option value="America/New_York" {% if user_profile.timezone == "America/New_York" %}selected{% endif %}>Eastern Time (EST)</option>
-                <option value="America/Chicago" {% if user_profile.timezone == "America/Chicago" %}selected{% endif %}>Central Time (CST)</option>
-                <option value="America/Denver" {% if user_profile.timezone == "America/Denver" %}selected{% endif %}>Mountain Time (MST)</option>
-                <option value="America/Los_Angeles" {% if user_profile.timezone == "America/Los_Angeles" %}selected{% endif %}>Pacific Time (PST)</option>
-            </select>
-            <button type="submit" class="btn save-btn">Save Timezone</button>
-        </form>
-
-        <hr class="divider">
+            {% if caretakers %}
+                <hr class="divider">
+                <h3 class="section-title">Your Caretakers</h3>
+                <ul>
+                    {% for caretaker in caretakers %}
+                        <li>{{ caretaker.get_full_name }} ({{ caretaker.username }})</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
 
         {% if request.user.is_authenticated and request.user.socialaccount_set.all %}
             <p class="warning-text">
@@ -40,10 +42,8 @@
         <h3 class="section-title">Device Connection</h3>
         <p>Bluetooth Status: <span id="bluetooth-status">Checking...</span></p>
         <button onclick="checkBluetooth()" class="btn check-btn">Check Bluetooth</button>
+
         <hr class="divider">
-        
-
-
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit" class="btn logout-btn">Logout</button>
@@ -54,41 +54,21 @@
 <script>
     async function checkBluetooth() {
         const statusElement = document.getElementById("bluetooth-status");
-
         if (!navigator.bluetooth) {
-            statusElement.innerText = "Bluetooth not supported in your browser. Try Chrome or Edge.";
+            statusElement.innerText = "Bluetooth not supported in your browser.";
             return;
         }
-
         try {
             const device = await navigator.bluetooth.requestDevice({
                 acceptAllDevices: true,
-                optionalServices: ['battery_service'] 
+                optionalServices: ['battery_service']
             });
-
-            if (device.gatt.connected) {
-                statusElement.innerText = "Connected to: " + device.name;
-            } else {
-                statusElement.innerText = "Bluetooth device detected but not connected.";
-            }
-
-            device.addEventListener('gattserverdisconnected', () => {
-                statusElement.innerText = "Bluetooth device disconnected.";
-            });
-
+            statusElement.innerText = "Connected to: " + device.name;
         } catch (error) {
-            if (error.name === "NotFoundError") {
-                statusElement.innerText = "No Bluetooth devices found.";
-            } else if (error.name === "SecurityError") {
-                statusElement.innerText = "Bluetooth requires HTTPS connection.";
-            } else {
-                statusElement.innerText = "Error: " + error.message;
-            }
+            statusElement.innerText = "Bluetooth check failed: " + error.message;
         }
     }
-
     window.onload = checkBluetooth;
 </script>
-
 
 {% endblock %}
