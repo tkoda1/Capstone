@@ -13,11 +13,17 @@ hx.zero()
 print("Reading raw-ish value (averaged):")
 print(hx.get_raw_data_mean())
 
+readings = []
+
 print("Now reading weight:")
 try:
     while True:
         weight = hx.get_weight_mean(5)
-        print(f"Weight: {weight:.2f} units")
+        readings.append(weight)
+        if len(readings) > 10:
+            readings.pop(0)
+        average_weight = sum(readings) / len(readings)
+        print(f"Weight: {Average_weight:.2f} units")
         time.sleep(0.5)
 except KeyboardInterrupt:
     print("Exiting...")
