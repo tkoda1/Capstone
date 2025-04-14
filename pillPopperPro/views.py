@@ -740,3 +740,25 @@ def account_caretaker(request):
         'user_profile': user_profile,
         'patients': patients
     })
+
+
+@login_required
+def remove_caretaker(request):
+    if request.method == 'POST':
+        username = request.POST.get('caretaker_username')
+        try:
+            caretaker = User.objects.get(username=username)
+            caretaker_profile = UserProfile.objects.get(user=caretaker)
+
+            if caretaker_profile.role != 'caretaker':
+                messages.error(request, f"{username} is not a registered caretaker.")
+            else:
+                patient_profile = UserProfile.objects.get(user=request.user)
+                patient_profile.caretakers.remove(caretaker)
+                messages.success(request, f"{username} has been removed from your caretakers.")
+        except User.DoesNotExist:
+            messages.error(request, f"No user with username: {username}")
+        except UserProfile.DoesNotExist:
+            messages.error(request, f"{username} does not have a profile.")
+
+    return redirect('account')

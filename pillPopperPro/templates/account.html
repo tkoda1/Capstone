@@ -26,10 +26,18 @@
                 <h3 class="section-title">Your Caretakers</h3>
                 <ul>
                     {% for caretaker in caretakers %}
-                        <li>{{ caretaker.get_full_name }} ({{ caretaker.username }})</li>
+                        <li>
+                            {{ caretaker.get_full_name }} ({{ caretaker.username }})
+                            <form method="POST" action="{% url 'remove_caretaker' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="caretaker_username" value="{{ caretaker.username }}">
+                                <button type="submit" class="btn danger-btn" onclick="return confirm('Remove this caretaker?')">Remove</button>
+                            </form>
+                        </li>
                     {% endfor %}
                 </ul>
             {% endif %}
+
         {% endif %}
 
         {% if request.user.is_authenticated and request.user.socialaccount_set.all %}
