@@ -37,6 +37,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['pillpopperpro.com', '127.0.0.1', '18.223.133.87', 'localhost']
 
 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,7 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pillPopperPro',
     'social_django',
-   
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
@@ -175,3 +181,14 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['access_token', 'expires']
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = CONFIG.get("GoogleOAuth2", "client_id")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = CONFIG.get("GoogleOAuth2", "client_secret")
 SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = "http://127.0.0.1:8000/oauth/complete/google-oauth2/"
+
+TWILIO_ACCOUNT_SID = CONFIG.get("Twilio", "twilio_account_sid")
+TWILIO_AUTH_TOKEN = CONFIG.get("Twilio", "twilio_auth_token")
+TWILIO_PHONE_NUMBER = CONFIG.get("Twilio", "twilio_number")
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = CONFIG.get("Email", "email_host_user")
+EMAIL_HOST_PASSWORD = CONFIG.get("Email", "email_host_password")

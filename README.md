@@ -19,6 +19,12 @@ Then run the demo in the usual way:
 If attempting to try Oath logging please use school email as other emails are not authorized. Additionally if secret key is needed contact Taylor.
 
 
+*Celery locally*
+One terminal: python manage.py runserver
+Another terminal: celery -A webapps worker --loglevel=info
+Yet another terminal: celery -A webapps beat --loglevel=info
+
+
 References & Sources:
 17437 homework 7
 
@@ -46,3 +52,4 @@ https://www.geeksforgeeks.org/passing-a-function-as-a-parameter-in-javascript/
 
 https://developers.google.com/identity/sign-in/web/sign-in 
 
+https://chatgpt.com/share/67fd6fd5-d66c-8000-9abd-c118a1fe5dcb

@@ -2,10 +2,11 @@
 
 import time
 from hx711 import HX711
+import lgpio as GPIO
 
 DT_PIN = 5
 SCK_PIN = 6
-
+GPIO.setmode(GPIO.BCM) 
 hx = HX711(DT_PIN, SCK_PIN)
 hx.reset()
 hx.zero()

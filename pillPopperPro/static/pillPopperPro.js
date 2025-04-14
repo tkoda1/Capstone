@@ -191,6 +191,7 @@ function update_pill_schedule(items) {
 
             if ((scheduled_hour === curr_hour && scheduled_minute <= curr_minute && item['taken_today'] === 0) ||
                 (scheduled_hour < curr_hour && item['taken_today'] === 0)) {
+                console.log(item)
                 message += "\n" + item['name'];
             }
         });
@@ -202,10 +203,9 @@ function update_pill_schedule(items) {
     }
 
     console.log('Pills to take');
-    
     message = "Hello! You are scheduled to take the following medications:" + 
-              message + '\nPlease press OK to dispense medication.';
-    // confirm(message); COMMENTED OUT FOR TESTING PURPOSES
+              message;
+    // confirm(message);
 }
 
 
@@ -238,6 +238,6 @@ function update_pill_refills(items) {
         message = message + upcoming_refills.join(", ")
     }
     if (message.length > 0) {
-        alert(message)
+        confirm(message);
     }
 }

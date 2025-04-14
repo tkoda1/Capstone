@@ -26,6 +26,7 @@ from django.urls import path
 
 urlpatterns = [
     path('', views.home_page, name='root'), 
+    path('admin/', admin.site.urls),
     path('oauth/', include('social_django.urls', namespace='social')),
     #path('dispense', views.dispense, name='dispense'),
     path('dispense/', views.dispense, name='dispense'),

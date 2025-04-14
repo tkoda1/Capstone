@@ -31,7 +31,7 @@ class Pill(models.Model):
     taken_times = models.JSONField(default=list)
 
     def __str__(self):
-        return f"Pill id={self.id} | User: {self.user} | {self.name} | Time Zone: {self.timezone}"
+        return f"Pill id={self.id} | User: {self.user} | {self.name} | Time Zone: {self.timezone} | Taken today {self.taken_today}"
 
     def add_taken_time(self):
         now = datetime.datetime.now().isoformat()  

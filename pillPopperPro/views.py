@@ -194,6 +194,7 @@ def dispense(request):
             if pill.quantity_remaining > 0:
                 slot_angle = pill.slot_angle
                 pill.quantity_remaining -= 1
+                pill.taken_today = 1
                 if slot_angle == 0:
                     print('Updating angle from 0 to 180')
                     pill.slot_angle = 180
@@ -205,6 +206,7 @@ def dispense(request):
                 #print(type(pill.quantity_remaining))
                 print(pill.quantity_remaining)
                 print(pill.slot_angle)
+                print(pill)
 
  
                 refill_warning = pill.quantity_remaining == 3
