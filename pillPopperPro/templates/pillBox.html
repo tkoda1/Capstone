@@ -84,6 +84,47 @@
     color: #333;
 }
 
+.popup-overlay {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-modal {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    text-align: left;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    font-family: sans-serif;
+}
+
+.popup-modal h2 {
+    margin-top: 0;
+}
+
+.popup-modal button {
+    margin-top: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.popup-modal button:hover {
+    background-color: #45a049;
+}
+
 @media screen and (max-width: 900px) {
     .grid-container {
         max-width: 90vw;
@@ -124,6 +165,21 @@
 
 
 </style>
+
+<div id="pillbox-popup-overlay" class="popup-overlay">
+    <div class="popup-modal">
+        <h2>Welcome to your Pill Box!</h2>
+        <p>Your Pillbox is where you will enter information about your medication.</p>
+        <ol>
+            <li><strong>Step 1:</strong> Identify the pill slot on the machine where you wish to store your medication.</li>
+            <li><strong>Step 2:</strong> Pour medication into the selected slot.</li>
+            <li><strong>Step 3:</strong> On the Pill Box Page, click on the slot where you stored your medication and fill out the form with the corresponding medication information.</li>
+            <li><strong>Step 4:</strong> Navigate to the dispensing page to dispense medication when ready!</li>
+        </ol>
+        <button onclick="closePillboxPopup()">Got it!</button>
+    </div>
+</div>
+
 
 <div class="title-container">
     <h1>Pill Box</h1>
@@ -185,6 +241,20 @@
         <p class="pill-name">Slot 6: {{ pill_name6 }}</p>
     </div>
 </div>
+
+<script>
+    function closePillboxPopup() {
+        document.getElementById('pillbox-popup-overlay').style.display = 'none';
+        localStorage.setItem("seenPillboxInstructions", "true");
+    }
+    
+    window.onload = function () {
+        if (!localStorage.getItem("seenPillboxInstructions")) {
+            document.getElementById('pillbox-popup-overlay').style.display = 'flex';
+        }
+    };
+</script>
+    
 
 
 
