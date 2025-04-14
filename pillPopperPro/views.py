@@ -159,11 +159,17 @@ def get_google_calendar_service(request):
 def home_page(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
 
+    #return render(request, 'account.html', {
+    #    'user_profile': user_profile,
+    #    'caretakers': caretakers
+    #})
+    context = {}
+    context['user_profile'] = user_profile
 
     if user_profile.role == 'caretaker':
         return redirect('patient_tracker')
     else:
-        return render(request, 'home.html')
+        return render(request, 'home.html', context)
 
 
 
@@ -228,6 +234,9 @@ def dispense(request):
         context[f'pill_name{i}'] = pill.name if pill else "Empty"
         context[f'pill_image{i}'] = pill.image.url if pill and pill.image else "/static/pill.jpeg"
 
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    context['user_profile'] = user_profile
+
     return render(request, 'dispense.html', context)
 
 
@@ -239,6 +248,9 @@ def pill_information(request, pill_slot):
     context = {
         'pill': pill
     }
+
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    context['user_profile'] = user_profile
     return render(request, 'PillInformation.html', context)
 
 
@@ -261,6 +273,9 @@ def pill_box(request):
         if( pill and pill.image):
             print(pill.image.url)
         context[f'pill_image{i}'] = pill.image.url if pill and pill.image else "/static/pill.jpeg"
+
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    context['user_profile'] = user_profile
 
     return render(request, 'pillBox.html', context)
 
@@ -296,6 +311,8 @@ def new_pill_form(request, slot_id):
 
     form = PillForm(request.POST, request.FILES)
     context['form'] = form
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    context['user_profile'] = user_profile
 
     Pill.objects.filter(user=request.user, pill_slot=slot_id).delete()
 
@@ -353,6 +370,8 @@ def new_pill_form(request, slot_id):
     #needed to render the pill box page. Could this have been done better? yes
     num_slots = 6  
     context = {}
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    context['user_profile'] = user_profile
 
     pills = Pill.objects.filter(user=request.user)
     pill_dict = {pill.pill_slot: pill for pill in pills}
@@ -569,6 +588,9 @@ def dashboard(request):
         "accuracy_stats": accuracy_stats
     }
 
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    context['user_profile'] = user_profile
+
     return render(request, "pillDashboard.html", context)
 
 
@@ -624,6 +646,9 @@ def patient_tracker(request):
         except UserProfile.DoesNotExist:
             context['error'] = f"{username_query} does not have a profile set up."
 
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    context['user_profile'] = user_profile
+
     return render(request, 'patientTracker.html', context)
 
 @login_required
@@ -644,6 +669,8 @@ def patient_dashboard(request, username):
 
         context = get_pill_dashboard_context(patient_user)
         context['patient'] = patient_user
+        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        context['user_profile'] = user_profile
         return render(request, 'pillDashboard.html', context)
 
     except User.DoesNotExist:
@@ -762,3 +789,4 @@ def remove_caretaker(request):
             messages.error(request, f"{username} does not have a profile.")
 
     return redirect('account')
+

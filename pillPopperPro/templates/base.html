@@ -11,27 +11,40 @@
 	</head>
 
 	<body>
+
         <div class="navDropDown">
             <select id="navigation-dropdown" onchange="navigateToPage()">
                 <option value="">Select an option</option>
-                <option value="{% url 'dispense' %}">Dispense</option>
-                <option value="{% url 'pill_box' %}">PillBox</option>
-                <option value="{% url 'dashboard' %}">Dashboard</option>
-                <option value="{% url 'account' %}">Account</option>
+        
+                {% if user_profile.role == 'caretaker' %}
+                    <option value="{% url 'patient_tracker' %}">Patient Tracker</option>
+                    <option value="{% url 'account_caretaker' %}">Account</option>
+                
+                {% elif user_profile.role == 'patient' %}
+                    <option value="{% url 'dispense' %}">Dispense</option>
+                    <option value="{% url 'pill_box' %}">PillBox</option>
+                    <option value="{% url 'dashboard' %}">Dashboard</option>
+                    <option value="{% url 'account' %}">Account</option>
+                {% endif %}
             </select>
         </div>
-    
+        
         <script>
             function navigateToPage() {
-                var dropdown = document.getElementById("navigation-dropdown");
-                var selectedValue = dropdown.value;
+                const dropdown = document.getElementById("navigation-dropdown");
+                const selectedValue = dropdown.value;
                 if (selectedValue) {
                     window.location.href = selectedValue;
                 }
             }
-            window.onload = pill_schedule;
-            window.setInterval(pill_schedule, 60000);
+        
+            
+            if (typeof pill_schedule === 'function') {
+                window.onload = pill_schedule;
+                window.setInterval(pill_schedule, 60000);
+            }
         </script>
+        
     
 
 
