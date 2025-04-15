@@ -16,6 +16,7 @@ aneesha_email = 'aneeshab@andrew.cmu.edu'
 subject = 'This is my subject'
 body = 'This is my body'
 
+# need to update the dashboard as well
 @shared_task
 def reset_taken_today():
     print('Running reset taken today')
@@ -45,7 +46,7 @@ def reset_taken_today():
                     You have not taken the following medications
                     on {date.today()}: {', '.join(pills_not_taken)}"""
             user_email = user.email
-            # send_email(user_subject, user_body, user_email)
+            send_email(user_subject, user_body, user_email)
             caretaker_subject = 'Alert: patient failure to take medication'
             for caretaker in caretakers:
                 print(caretaker)
