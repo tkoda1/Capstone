@@ -46,6 +46,7 @@ def release_pill(data):
     print("Releasing pill")
     if not data["slot"]:
         on_error(ws, "Invalid pill slot sent")
+        speaker.play_invalid_dispensing()
         message = {'action': 'dispensed',
                    'status': 'error',
                    'reason': 'invalid pill slot'}
@@ -61,7 +62,7 @@ def release_pill(data):
     #     send_message(ws, message)
     #     return
     # initial_weight = loadcell.read_weight()
-    # speaker.play_release_pill()
+    speaker.play_release_pill()
     servo.dispense_pill(int(data["slot"])-1, int(data["angle"]))
     # final_weight = loadcell.read_weight()
     # if (final_weight - initial_weight < LOAD_CELL_ERROR):
@@ -72,7 +73,7 @@ def release_pill(data):
     #                'reason': 'bad weight reading'}
     #     send_message(ws, message)
     #     return
-    # speaker.play_finish_dispensing()
+    speaker.play_finish_dispensing()
     message = {'action': 'dispensed',
                'status': 'success'}
     send_message(ws, message)
@@ -87,7 +88,7 @@ def refill_reminder(data):
     print("Refill reminder")
     if not data["slot"]:
         on_error(ws, "Invalid pill slot sent for reminder")
-    # speaker.play_refill_reminder()
+    speaker.play_refill_reminder()
 
 def send_message(ws, message):
     ws.send(json.dumps(message))
