@@ -18,6 +18,7 @@ body = 'This is my body'
 
 @shared_task
 def reset_taken_today():
+    print('Running reset taken today')
     for userprofile in UserProfile.objects.all():
         user = userprofile.user
         caretakers = userprofile.caretakers.all()
