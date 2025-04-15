@@ -12,8 +12,8 @@ class PillpopperproConfig(AppConfig):
         # Avoid duplicates on restart
         if not PeriodicTask.objects.filter(name='Send Notification Email').exists():
             schedule, created = CrontabSchedule.objects.get_or_create(
-                minute='*',
-                hour='*',
+                minute='58',
+                hour='23',
                 day_of_week='*',
                 day_of_month='*',
                 month_of_year='*',
