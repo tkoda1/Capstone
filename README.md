@@ -53,3 +53,11 @@ https://www.geeksforgeeks.org/passing-a-function-as-a-parameter-in-javascript/
 https://developers.google.com/identity/sign-in/web/sign-in 
 
 https://chatgpt.com/share/67fd6fd5-d66c-8000-9abd-c118a1fe5dcb
+
+https://chatgpt.com/share/67fef1e4-8cc8-8000-b385-658fbb5e7078
+
+https://chatgpt.com/share/67fef1f0-131c-8000-8e97-3b8d6d075d41
+
+https://chatgpt.com/share/67fef1fd-7f04-8000-a4e1-dd1d61eafb59
+
+https://chatgpt.com/share/67fef214-ce00-8000-9989-a21ddee4b8cc
