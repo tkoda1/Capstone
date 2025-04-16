@@ -37,7 +37,7 @@ username_validator = RegexValidator(r'^[\w.@+-]+$', 'Enter a valid username.')
 class PillForm(forms.Form):
     name = forms.CharField(max_length=100)
     dosage = forms.IntegerField(min_value=1, max_value=9999)
-    quantity_initial = forms.IntegerField(min_value=1)
+    quantity_initial = forms.IntegerField(min_value=1, label='Quantity Initial')
 
     days_of_week = forms.MultipleChoiceField(
         choices=DAYS_OF_WEEK,
@@ -75,7 +75,7 @@ class PillForm(forms.Form):
     def clean_quantity_initial(self):
         quantity_initial = self.cleaned_data['quantity_initial']
         if quantity_initial > 30:
-            raise forms.ValidationError('Please enter valid quantity')
+            raise forms.ValidationError('Please enter valid quantity. Cannot hold more than 30 pills')
         return quantity_initial
 
     def clean_disposal_times(self):

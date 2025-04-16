@@ -7,7 +7,14 @@
     <form method="post" action="{% url 'new_pill_form' slot_id=id %}" enctype="multipart/form-data" class="styled-form">
         {% csrf_token %}
 
-        {{ form.errors }}
+        {% for field in form %}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                <p class="error-message"><strong>{{ field.label }}:</strong> {{ error }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+
         
         <div class="form-group">
             <label for="{{ form.name.id_for_label }}">Name:</label>
