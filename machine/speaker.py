@@ -6,6 +6,7 @@ from pydub import AudioSegment
 from pydub.playback import play
 
 from constants import ( 
+    TEST_AUDIO_PATH,
     REFILL_PILL_PATH, 
     RELEASE_PILL_PATH,
     FINISH_DISPENSING_PATH,
@@ -18,6 +19,8 @@ refill_reminder = AudioSegment.from_file(file = RELEASE_PILL_PATH,
 finish_dispensing = AudioSegment.from_file(file = FINISH_DISPENSING_PATH,
                                            format = "wav")
 invalid_dispensing = AudioSegment.from_file(file = INVALID_DISPENSING_PATH,
+                                            format = "wav")
+test_audio = AudioSegment.from_file(file = TEST_AUDIO_PATH,
                                             format = "wav")
 
 
@@ -36,3 +39,5 @@ def play_finish_dispensing():
 # indicating if the wrong pill amount was dispensed
 def play_invalid_dispensing():
     play(invalid_dispensing)
+
+play(test_audio)

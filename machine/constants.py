@@ -2,6 +2,7 @@
 
 # WEBSOCKET_URL = "ws://18.223.133.87/pillPopperPro/data/"
 WEBSOCKET_URL = "ws://pillpopperpro.com/pillPopperPro/data/"
+TEST_AUDIO_PATH = "audioAlerts/testAudio.wav"
 RELEASE_PILL_PATH = "audioAlerts/release_pill.wav"
 REFILL_PILL_PATH = "audioAlerts/refill.wav"
 FINISH_DISPENSING_PATH = "audioAlerts/dispensed.wav"
