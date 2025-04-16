@@ -52,59 +52,55 @@ async function dispense_pill() {
 
     const timestamp = new Date().toISOString().replace("Z", "+00:00");
 
-    await fetch("/dispense/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCSRFToken(),
-        },
-        body: JSON.stringify({ slot: pillSlot })
-    })
-    .then(response => {
-        if (!response.ok) {
+
+    try {
+        const dispense_response = await fetch("/dispense/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ slot: pillSlot })
+        })
+
+        if (!dispense_response.ok){
             if (response.status === 400) {
                 alert("No more pills to dispense");
                 throw new Error("No pills remaining");
             }
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Server Response:", data);
-        if (data.success) {
-            // send message to ws to release 
-            console.log(data)
-            const slot_angle = data.slot_angle
-            let ws_message = { action: "release", slot: pillSlot, angle: slot_angle };
-            socket.send(JSON.stringify(ws_message));
+        
+        const dispense_data = await dispense_response.json();
 
-            console.log(`Updated quantity_remaining: ${data.quantity_remaining}`);
-            
-            if (data.refill_warning) {
-                alert("Warning: Only 3 pills remaining! Refill your machine soon.");
-            }
-        } else {
-            alert(data.error || "Error dispensing pill.");
+        if (!dispense_data.success) {
+            alert(dispense_data.error || "Error dispensing pill.");
+            throw new Error(`Error: ${dispense_data.error} | Error dispensing pill`)
         }
-    })
-    .catch(error => console.error("Fetch error:", error));
-    
-    
-    
 
+        const slot_angle = dispense_data.slot_angle
+        let ws_message = { action: "release", slot: pillSlot, angle: slot_angle };
+        socket.send(JSON.stringify(ws_message));
 
-    await fetch("/update_taken_times/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCSRFToken(),
-        },
-        body: JSON.stringify({ slot: pillSlot, time: timestamp })
-    })
-    .then(response => response.json())
-    .then(data => console.log("Updated taken times:", data.taken_times))
-    .catch(error => console.error("Error updating taken times:", error));
+        if (dispense_data.refill_warning) {
+            alert("Warning: Only 3 pills remaining! Refill your machine soon.");
+        }
+
+       const update_response = await fetch("/update_taken_times/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ slot: pillSlot, time: timestamp })
+        })
+
+        const update_data = await update_response.json();
+        console.log("Updated taken times:", update_data.taken_times)
+    } catch (error) {
+        console.log("Caught error, ", error)
+    }
+
 }
 
 
@@ -205,7 +201,7 @@ function update_pill_schedule(items) {
     console.log('Pills to take');
     message = "Hello! You are scheduled to take the following medications:" + 
               message;
-    // confirm(message);
+    confirm(message);
 }
 
 

@@ -190,6 +190,12 @@ def dispense(request):
             print(pill.quantity_remaining)
             print(pill.slot_angle)
 
+            # check to make sure the user isn't taking more than the dosage
+            if pill.taken_today >= pill.dosage:
+                return JsonResponse({"success": False, "error": 
+                    "Cannot dispense more pills than the specified dosage"}, 
+                    status=200)
+
             #weirdly always one off also need to add new notifcation about when empty 
             if pill.quantity_remaining > 0:
                 slot_angle = pill.slot_angle
