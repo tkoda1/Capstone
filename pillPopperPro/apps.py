@@ -13,7 +13,7 @@ class PillpopperproConfig(AppConfig):
         if not PeriodicTask.objects.filter(name='Send Notification Email').exists():
             schedule, created = CrontabSchedule.objects.get_or_create(
                 minute='58',
-                hour='23',
+                hour='*',
                 day_of_week='*',
                 day_of_month='*',
                 month_of_year='*',

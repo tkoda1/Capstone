@@ -7,51 +7,52 @@ from .twilio_sms import send_sms
 from .email import send_email
 from celery import shared_task
 from django.conf import settings
+from django.utils import timezone
+from zoneinfo import ZoneInfo
 from datetime import date
 
 
-taylor_email = 'tkoda@andrew.cmu.edu'
-mm_email = 'mdemango@andrew.cmu.edu'
-aneesha_email = 'aneeshab@andrew.cmu.edu'
-subject = 'This is my subject'
-body = 'This is my body'
-
-# need to update the dashboard as well
 @shared_task
 def reset_taken_today():
+    now_utc = timezone.now()
+
     print('Running reset taken today')
     for userprofile in UserProfile.objects.all():
         user = userprofile.user
-        caretakers = userprofile.caretakers.all()
-        pills = Pill.objects.filter(user=user)
-        pills_not_taken = []
-        print(user.username)
+        user_tz = ZoneInfo(userprofile.timezone)
+        local_time = now_utc.astimezone(user_tz)
 
-        # find which pills the user hasn't taken today, and reset any if taken
-        for pill in pills:
-            if pill.taken_today == 0:
-                pills_not_taken.append(pill.name)
-                print(f'User has not taken pill {pill.name}')
-            else:
-                pill.taken_today = 0
-                pill.save()
-                print(f'User has taken pill {pill}')
+        if local_time.hour == 23 and local_time.minute == 58:
+            caretakers = userprofile.caretakers.all()
+            pills = Pill.objects.filter(user=user)
+            pills_not_taken = []
+            print(user.username)
 
-        print(pills_not_taken)
-        # send email to user and caregivers if did not take all medication
-        if pills_not_taken != []:
-            print(caretakers)
-            user_subject = 'Alert: failure to take medication'
-            user_body = f"""Hello {user.get_full_name()},\n
-                    You have not taken the following medications
-                    on {date.today()}: {', '.join(pills_not_taken)}"""
-            user_email = user.email
-            send_email(user_subject, user_body, user_email)
-            caretaker_subject = 'Alert: patient failure to take medication'
-            for caretaker in caretakers:
-                print(caretaker)
-                # caretaker_body = f"""Hello {caretaker.get_full_name()},\n
-                #     You have not taken the following medications
-                #     on {date.today()}: {', '.join(pills_not_taken)}"""
-                # caretaker_email = caretaker.email
-                # send_email(caretaker_subject, caretaker_body, caretaker_email)
+            # find which pills the user hasn't taken today, and reset any if taken
+            for pill in pills:
+                if pill.taken_today == 0:
+                    pills_not_taken.append(pill.name)
+                    print(f'User has not taken pill {pill.name}')
+                else:
+                    pill.taken_today = 0
+                    pill.save()
+                    print(f'User has taken pill {pill}')
+
+            print(pills_not_taken)
+            # send email to user and caregivers if did not take all medication
+            if pills_not_taken != []:
+                print(caretakers)
+                user_subject = 'Alert: failure to take medication'
+                user_body = f"""Hello {user.get_full_name()},\n
+                        You have not taken the following medications
+                        on {date.today()}: {', '.join(pills_not_taken)}"""
+                user_email = user.email
+                send_email(user_subject, user_body, user_email)
+                caretaker_subject = 'Alert: patient failure to take medication'
+                for caretaker in caretakers:
+                    print(caretaker)
+                    # caretaker_body = f"""Hello {caretaker.get_full_name()},\n
+                    #     You have not taken the following medications
+                    #     on {date.today()}: {', '.join(pills_not_taken)}"""
+                    # caretaker_email = caretaker.email
+                    # send_email(caretaker_subject, caretaker_body, caretaker_email)
