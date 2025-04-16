@@ -61,3 +61,7 @@ https://chatgpt.com/share/67fef1f0-131c-8000-8e97-3b8d6d075d41
 https://chatgpt.com/share/67fef1fd-7f04-8000-a4e1-dd1d61eafb59
 
 https://chatgpt.com/share/67fef214-ce00-8000-9989-a21ddee4b8cc
+
+https://chatgpt.com/share/67ffc83b-921c-8000-a1e7-ab0baddda841
+
+https://chatgpt.com/share/67ffce38-9dc0-8000-a0b8-61a6333579a3

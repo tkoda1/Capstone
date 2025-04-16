@@ -6,6 +6,8 @@
 
     <form method="post" action="{% url 'new_pill_form' slot_id=id %}" enctype="multipart/form-data" class="styled-form">
         {% csrf_token %}
+
+        {{ form.errors }}
         
         <div class="form-group">
             <label for="{{ form.name.id_for_label }}">Name:</label>

@@ -15,7 +15,6 @@ from configparser import ConfigParser
 import os
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,6 +23,7 @@ CONFIG.read(BASE_DIR / "config.ini")
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -193,3 +193,10 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = CONFIG.get("Email", "email_host_user")
 EMAIL_HOST_PASSWORD = CONFIG.get("Email", "email_host_password")
+
+DJANGO_ENV = CONFIG.get("Environment", "django_env")
+IS_PRODUCTION = DJANGO_ENV == 'production'
+
+SECURE_SSL_REDIRECT = IS_PRODUCTION
+SESSION_COOKIE_SECURE = IS_PRODUCTION
+CSRF_COOKIE_SECURE = IS_PRODUCTION
