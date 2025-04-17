@@ -204,7 +204,7 @@ async function take_and_refill_notification() {
             return;
         }
 
-        pill_popup.style.display = "block";
+        pill_popup.style.display = "flex";
         const pill_list = document.getElementById("pill-list");
         const pill_text = document.getElementById("pill-text");
         const refill_list = document.getElementById("refill-list");
