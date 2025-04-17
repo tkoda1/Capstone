@@ -88,10 +88,8 @@
     }
     
     window.onload = () => {
+        localStorage.setItem("seenHelloMesage", "false");
         take_and_refill_notification();
-        if (!localStorage.getItem("seenHelloMessage")) {
-            document.getElementById('pillbox-popup-overlay').style.display = 'flex';
-        }
     };
 </script>
     
