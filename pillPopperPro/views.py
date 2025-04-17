@@ -541,7 +541,10 @@ def dashboard(request):
 
         for taken_time in pill.taken_times:
             dt = datetime.datetime.fromisoformat(taken_time)
-            dt2 = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)
+            if dt.tzinfo is None:
+                dt = pill_timezone.localize(dt)
+            dt2 = dt.astimezone(pytz.timezone('US/Eastern'))
+            #dt2 = dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)
             taken_datetimes.append(dt2)
 
             day = dt2.strftime("%a %m/%d")
@@ -569,7 +572,9 @@ def dashboard(request):
             for disposal_time in pill.disposal_times:
                 time_obj = datetime.datetime.strptime(disposal_time, "%H:%M").time()
                 scheduled_dt = datetime.datetime.combine(scheduled_date, time_obj)
-                scheduled_dt = scheduled_dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)
+                scheduled_dt = pill_timezone.localize(scheduled_dt)
+                #scheduled_dt = datetime.datetime.combine(scheduled_date, time_obj)
+                #scheduled_dt = scheduled_dt.replace(tzinfo=pytz.utc).astimezone(pill_timezone)
 
                 hour = f"{scheduled_dt.hour}:00"
                 time = scheduled_dt.strftime("%I:%M %p %Z")
