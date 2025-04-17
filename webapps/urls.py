@@ -49,8 +49,8 @@ urlpatterns = [
     path('add-caretaker/', views.add_caretaker, name='add_caretaker'),
     path('account-caretaker', views.account_caretaker, name='account_caretaker'),
     path('remove-caretaker/', views.remove_caretaker, name='remove_caretaker'),
-
-
+    path('get-schedule-reminder/', views.get_schedule_reminder, name='schedule_reminder'),
+    path('get-refill-reminder/', views.get_refill_reminder, name='refill_reminder'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

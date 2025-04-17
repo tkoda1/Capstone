@@ -152,7 +152,6 @@ function pill_schedule() {
     let xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
         if (this.readyState !== 4) return
-        updatePage(update_pill_schedule, xhr)
     }
 
     xhr.open("GET", "/pillPopperPro/get-pills", true)
@@ -160,80 +159,108 @@ function pill_schedule() {
 }
 
 function pill_refills() {
+    console.log('here');
     let xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
         if (this.readyState !== 4) return
-        updatePage(update_pill_refills, xhr)
     }
 
     xhr.open("GET", "/pillPopperPro/get-pills", true)
     xhr.send()
 }
 
-function update_pill_schedule(items) {
-    if (items['pills'].length === 0) {
-        return;
-    }
-    
-    const date = new Date();
-    const curr_hour = date.getHours();
-    const curr_minute = date.getMinutes();
-    let message = "";
 
-    items['pills'].forEach(item => {
-        item['disposal_times'].forEach(time => {  
-            const scheduled_hour = parseInt(time.substring(0, 2));
-            const scheduled_minute = parseInt(time.substring(3));
+async function take_and_refill_notification() {
+    console.log("Take and refill notification pillpopperpro.js");
 
-            if ((scheduled_hour === curr_hour && scheduled_minute <= curr_minute && item['taken_today'] === 0) ||
-                (scheduled_hour < curr_hour && item['taken_today'] === 0)) {
-                console.log(item)
-                message += "\n" + item['name'];
-            }
-        });
-    });
+    try {
+        const refill_reminder = await fetch("/get-refill-reminder/", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+        })
 
-    if (message === "") {
-        console.log('No pills to take');
-        return;
-    }
+        const refill_data = await refill_reminder.json();
+        const refills = refill_data.refills;
+        const upcoming_refills = refill_data.upcoming_refills;
 
-    console.log('Pills to take');
-    message = "Hello! You are scheduled to take the following medications:" + 
-              message;
-    confirm(message);
-}
+        const schedule_reminder = await fetch("/get-schedule-reminder/", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+        })
 
+        const schedule_data = await schedule_reminder.json();
+        const pills = schedule_data.pills;
 
-function update_pill_refills(items) {
-    if (items['pills'].length == 0) {
-        return
-    }
-    let need_refills = [];
-    let upcoming_refills = [];
-    let refill_threshold = 10;
-    items['pills'].forEach(item => {
-        console.log(item);
-        if (item['quantity_remaining'] == 0) {
-            need_refills.push(item['name'])
-            console.log('here')
+        const pill_popup = document.getElementById("pillbox-popup-overlay");
+
+        if ((pills.length <= 0) && (refills.length <= 0) && (upcoming_refills.length <= 0)) {
+            pill_popup.style.display = "none";
+            return;
         }
-        else if (item['quantity_remaining'] < refill_threshold) {
-            upcoming_refills.push(item['name'])
-            console.log('here')
-        }
-    })
 
-    let message = ""
-    if (need_refills.length > 0) {
-        message = "The following medication(s) need to be filled: "
-        message = message + need_refills.join(", ") + "\n\n"
-    }
-    if (upcoming_refills.length > 0) {
-        message = message + "The following medication(s) are due for a refill: "
-        message = message + upcoming_refills.join(", ")
-    }
-    if (message.length > 0) {
-        confirm(message);
+        pill_popup.style.display = "block";
+        const pill_list = document.getElementById("pill-list");
+        const pill_text = document.getElementById("pill-text");
+        const refill_list = document.getElementById("refill-list");
+        const refill_text = document.getElementById("refill-text");
+        const upcoming_refill_list = document.getElementById("upcoming-refill-list");
+        const upcoming_refill_text = document.getElementById("upcoming-refill-text");
+
+        if (pills.length > 0) {
+            console.log("Pills detected");
+            pill_text.style.display = "block";
+            pill_list.style.display = "block";
+            pill_list.innerHTML = ""; // Clear previous content
+
+            pills.forEach(item => {
+                const pillItem = document.createElement("li");
+                pillItem.textContent = item;
+                pill_list.appendChild(pillItem);
+            })
+        } else {
+            pill_text.style.display = "none";
+            pill_list.style.display = "none";
+        }
+
+        if (refills.length > 0) {
+            console.log("Refills detected");
+            refill_text.style.display = "block";
+            refill_list.style.display = "block";
+            refill_list.innerHTML = ""; // Clear previous content
+
+            refills.forEach(item => {
+                const refillItem = document.createElement("li");
+                refillItem.textContent = item;
+                refill_list.appendChild(refillItem);
+            })
+        } else {
+            refill_text.style.display = "none";
+            refill_list.style.display = "none";
+        }
+
+        if (upcoming_refills.length > 0) {
+            console.log("Upcoming refills detected");
+            upcoming_refill_text.style.display = "block";
+            upcoming_refill_list.style.display = "block";
+            upcoming_refill_list.innerHTML = ""; // Clear previous content
+
+            upcoming_refills.forEach(item => {
+                const upcomingRefillItem = document.createElement("li");
+                upcomingRefillItem.textContent = item;
+                upcoming_refill_list.appendChild(upcomingRefillItem);
+            })
+        } else {
+            upcoming_refill_text.style.display = "none";
+            upcoming_refill_list.style.display = "none";
+        }
+
+    } catch (error) {
+        console.log("Caught error, ", error)
     }
 }

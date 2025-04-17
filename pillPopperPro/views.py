@@ -808,3 +808,44 @@ def remove_caretaker(request):
 
     return redirect('account')
 
+def get_schedule_reminder(request):
+    print('Scheduled reminder views.py')
+    if not request.user.is_authenticated:
+        return _my_json_error_response("You must be logged in to do this operation", status=401)
+    user = request.user
+    pills = Pill.objects.filter(user=user)
+    curr_datetime = datetime.datetime.now()
+    pills_to_take = []
+    for pill in pills:
+        take_time = datetime.datetime.strptime(pill.disposal_times[0], "%H:%M").time()
+        take_datetime = datetime.datetime.combine(datetime.date.today(), take_time)
+        if (curr_datetime > take_datetime) and (pill.taken_today == 0):
+            pills_to_take.append(pill.name)
+
+    return JsonResponse({"status": "success", 'pills': pills_to_take})
+
+def _my_json_error_response(message, status=200):
+    # You can create your JSON by constructing the string representation yourself (or just use json.dumps)
+    response_json = '{"error": "' + message + '"}'
+    return HttpResponse(response_json, content_type='application/json', status=status)
+
+
+def get_refill_reminder(request):
+    print('Refill reminder views.py')
+    if not request.user.is_authenticated:
+        return _my_json_error_response("You must be logged in to do this operation", status=401)
+    user = request.user
+    pills = Pill.objects.filter(user=user)
+    refills = []
+    upcoming_refills = []
+    refill_threshold = 10
+    for pill in pills:
+        if pill.quantity_remaining <= 0:
+            refills.append(pill.name)
+        elif pill.quantity_remaining <= refill_threshold:
+            upcoming_refills.append(pill.name)
+            print(pill.name)
+
+    return JsonResponse({"status": "success",
+                         'upcoming_refills': upcoming_refills,
+                        'refills': refills})

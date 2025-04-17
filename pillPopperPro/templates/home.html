@@ -1,6 +1,67 @@
 {% extends "base.html" %}
 
 {% block search-bar %}
+
+<style>
+
+.popup-overlay {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-modal {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    text-align: left;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    font-family: sans-serif;
+}
+
+.popup-modal h2 {
+    margin-top: 0;
+}
+
+.popup-modal button {
+    margin-top: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.popup-modal button:hover {
+    background-color: #45a049;
+}
+</style>
+
+<div id="pillbox-popup-overlay" class="popup-overlay" style="display: none;">
+    <div class="popup-modal">
+        <h2>Welcome to PillPopperPro!</h2>
+        <div id="pill-text">
+            <p>Your are due to take the following medication(s):</p>
+            <ol id="pill-list"></ol>
+        </div>
+        
+        <p id="refill-text">Your need to refill the following medication(s):</p>
+        <ol id="refill-list"></ol>
+        <p id="upcoming-refill-text">Your have upcoming refills for the following medication(s):</p>
+        <ol id="upcoming-refill-list"></ol>
+        <button onclick="closePillboxPopup()">Got it!</button>
+    </div>
+</div>
+
 <div class="homepage-container">
     <h1 class="homepage-title">PillPopperPro</h1>
     
@@ -21,6 +82,17 @@
 </div>
 
 <script>
-    window.onload = pill_refills;
+    function closePillboxPopup() {
+        document.getElementById('pillbox-popup-overlay').style.display = 'none';
+        localStorage.setItem("seenHelloMesage", "true");
+    }
+    
+    window.onload = () => {
+        take_and_refill_notification();
+        if (!localStorage.getItem("seenHelloMessage")) {
+            document.getElementById('pillbox-popup-overlay').style.display = 'flex';
+        }
+    };
 </script>
+    
 {% endblock %}
