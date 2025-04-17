@@ -295,6 +295,10 @@ def pill_box(request):
 @login_required
 def new_pill_form(request, slot_id):
     context = {'id': slot_id}
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+
+    context['user_profile'] = user_profile
 
     #modified this so that previous pill informaiton is rendered 
     if request.method == 'GET':
@@ -314,6 +318,7 @@ def new_pill_form(request, slot_id):
         except Pill.DoesNotExist:
             context['form'] = PillForm()
 
+        
         return render(request, 'newPillForm.html', context)
 
 

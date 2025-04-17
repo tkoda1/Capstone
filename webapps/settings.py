@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pillPopperPro',
     'social_django',
-    'django_celery_beat'
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
