@@ -5,8 +5,7 @@
 <style>
 .title-container {
     text-align: center;
-    margin-top: 310px;
-    padding: 10px;
+    margin-top: clamp(100px, 30vh, 310px);
 }
 
 .title-container h1 {
@@ -27,7 +26,7 @@
 .grid-container {
     display: grid;
     grid-template-columns: repeat(2, minmax(140px, 1fr));
-    gap: 50px;
+    gap: clamp(10px, 5vw, 50px);
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -45,7 +44,7 @@
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s;
-    width: 100%;
+    width: 31vw;
     max-width: 200px;
 }
 
@@ -163,6 +162,12 @@
     }
 }
 
+.center-items {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+
 
 </style>
 
@@ -186,61 +191,65 @@
     <p >Click to add/change Perscription</p>
 </div>
 
-<div class="grid-container">  
-    <div class="grid-item">
-        <a href="{% url 'new_pill_form' slot_id=1 %}">
-            <button class="image-button">
-                <img src="{{ pill_image1 }}" alt="Pill Slot 1">
-            </button>
-        </a>
-        <p class="pill-name">Slot 1: {{ pill_name1 }}</p>
-    </div>
+<div class="center-items">
+    <div class="grid-container">  
+        <div class="grid-item">
+            <a href="{% url 'new_pill_form' slot_id=1 %}">
+                <button class="image-button">
+                    <img src="{{ pill_image1 }}" alt="Pill Slot 1">
+                </button>
+            </a>
+            <p class="pill-name">Slot 1: {{ pill_name1 }}</p>
+        </div>
 
-    <div class="grid-item">
-        <a href="{% url 'new_pill_form' slot_id=2 %}">
-            <button class="image-button">
-                <img src="{{ pill_image2 }}" alt="Pill Slot 2">
-            </button>
-        </a>
-        <p class="pill-name">Slot 2: {{ pill_name2 }}</p>
-    </div>
+        <div class="grid-item">
+            <a href="{% url 'new_pill_form' slot_id=2 %}">
+                <button class="image-button">
+                    <img src="{{ pill_image2 }}" alt="Pill Slot 2">
+                </button>
+            </a>
+            <p class="pill-name">Slot 2: {{ pill_name2 }}</p>
+        </div>
 
-    <div class="grid-item">
-        <a href="{% url 'new_pill_form' slot_id=3 %}">
-            <button class="image-button">
-                <img src="{{ pill_image3 }}" alt="Pill Slot 3">
-            </button>
-        </a>
-        <p class="pill-name">Slot 3: {{ pill_name3 }}</p>
-    </div>
+        <div class="grid-item">
+            <a href="{% url 'new_pill_form' slot_id=3 %}">
+                <button class="image-button">
+                    <img src="{{ pill_image3 }}" alt="Pill Slot 3">
+                </button>
+            </a>
+            <p class="pill-name">Slot 3: {{ pill_name3 }}</p>
+        </div>
 
-    <div class="grid-item">
-        <a href="{% url 'new_pill_form' slot_id=4 %}">
-            <button class="image-button">
-                <img src="{{ pill_image4 }}" alt="Pill Slot 4">
-            </button>
-        </a>
-        <p class="pill-name">Slot 4: {{ pill_name4 }}</p>
-    </div>
+        <div class="grid-item">
+            <a href="{% url 'new_pill_form' slot_id=4 %}">
+                <button class="image-button">
+                    <img src="{{ pill_image4 }}" alt="Pill Slot 4">
+                </button>
+            </a>
+            <p class="pill-name">Slot 4: {{ pill_name4 }}</p>
+        </div>
 
-    <div class="grid-item">
-        <a href="{% url 'new_pill_form' slot_id=5 %}">
-            <button class="image-button">
-                <img src="{{ pill_image5 }}" alt="Pill Slot 5">
-            </button>
-        </a>
-        <p class="pill-name">Slot 5: {{ pill_name5 }}</p>
-    </div>
+        <div class="grid-item">
+            <a href="{% url 'new_pill_form' slot_id=5 %}">
+                <button class="image-button">
+                    <img src="{{ pill_image5 }}" alt="Pill Slot 5">
+                </button>
+            </a>
+            <p class="pill-name">Slot 5: {{ pill_name5 }}</p>
+        </div>
 
-    <div class="grid-item">
-        <a href="{% url 'new_pill_form' slot_id=6 %}">
-            <button class="image-button">
-                <img src="{{ pill_image6 }}" alt="Pill Slot 6">
-            </button>
-        </a>
-        <p class="pill-name">Slot 6: {{ pill_name6 }}</p>
+        <div class="grid-item">
+            <a href="{% url 'new_pill_form' slot_id=6 %}">
+                <button class="image-button">
+                    <img src="{{ pill_image6 }}" alt="Pill Slot 6">
+                </button>
+            </a>
+            <p class="pill-name">Slot 6: {{ pill_name6 }}</p>
+        </div>
     </div>
 </div>
+
+
 
 <script>
     function closePillboxPopup() {

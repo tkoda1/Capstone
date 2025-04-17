@@ -4,6 +4,7 @@
     min-height: 50vh;
     overflow-y: auto; 
     max-height: 90vh;
+    margin-top: 10vh;
 }
 
 .dashboard-titlee {
