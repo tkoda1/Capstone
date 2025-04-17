@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-b8+n^=j!)@w)7e_rvhls0-he5op3x&me8j78&e6@6f*shz7*#-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pillpopperpro.com', '127.0.0.1', '18.223.133.87', 'localhost']
+ALLOWED_HOSTS = ['www.pillpopperpro.com', 'pillpopperpro.com', '127.0.0.1', '18.223.133.87', 'localhost', '172.26.120.89']
 
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
@@ -194,9 +194,12 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = CONFIG.get("Email", "email_host_user")
 EMAIL_HOST_PASSWORD = CONFIG.get("Email", "email_host_password")
 
-# DJANGO_ENV = CONFIG.get("Environment", "django_env")
-# IS_PRODUCTION = DJANGO_ENV == 'production'
+DJANGO_ENV = CONFIG.get("Environment", "django_env")
+IS_PRODUCTION = DJANGO_ENV == 'production'
 
-# SECURE_SSL_REDIRECT = IS_PRODUCTION
-# SESSION_COOKIE_SECURE = IS_PRODUCTION
-# CSRF_COOKIE_SECURE = IS_PRODUCTION
+SECURE_SSL_REDIRECT = IS_PRODUCTION
+SESSION_COOKIE_SECURE = IS_PRODUCTION
+CSRF_COOKIE_SECURE = IS_PRODUCTION
+
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
