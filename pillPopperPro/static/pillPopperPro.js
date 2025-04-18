@@ -3,9 +3,9 @@
 let socket = null;
 
 function connect_to_server() {
-    let wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:"
-    let url = `${wsProtocol}//${window.location.host}/pillPopperPro/data/`;
-    // let url = `ws://${window.location.host}/pillPopperPro/data/`;
+    // let wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:"
+    // let url = `${wsProtocol}//${window.location.host}/pillPopperPro/data/`;
+    let url = `wss://${window.location.host}/pillPopperPro/data/`;
     socket = new WebSocket(url);
 
     socket.onerror = function(error) {
