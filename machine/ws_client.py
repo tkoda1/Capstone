@@ -42,7 +42,7 @@ def on_open(ws):
     print('OPEN CONNECTION')
     print("Opened connection")
 
-def release_pill(data):
+def release_pill(ws, data):
     print("Releasing pill")
     if not data["slot"]:
         on_error(ws, "Invalid pill slot sent")
@@ -84,7 +84,7 @@ def weight_difference(w1, w2):
         return False
     return True
 
-def refill_reminder(data):
+def refill_reminder(ws, data):
     print("Refill reminder")
     if not data["slot"]:
         on_error(ws, "Invalid pill slot sent for reminder")
