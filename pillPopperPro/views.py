@@ -315,10 +315,10 @@ def new_pill_form(request, slot_id):
             }
 
             context['form'] = PillForm(initial=initial_data)
+            context['selected_disposal_times'] = existing_pill.disposal_times
         except Pill.DoesNotExist:
             context['form'] = PillForm()
 
-        
         return render(request, 'newPillForm.html', context)
 
 

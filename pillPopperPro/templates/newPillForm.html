@@ -48,8 +48,17 @@
             <div class="checkbox-container">
                 <div class="scrollable-checkbox-list">
                     {% for value, label in form.fields.disposal_times.choices %}
-                        <label class="checkbox-label" onclick="toggleSelection(this)">
-                            <input type="checkbox" name="{{ form.disposal_times.name }}" value="{{ value }}" hidden>
+                        <label {% if value in selected_disposal_times %}
+                                    class="checkbox-label selected"
+                                {% else %}
+                                    class="checkbox-label"
+                                {% endif %} onclick="toggleSelection(this)">
+                            <input type="checkbox" 
+                                name="{{ form.disposal_times.name }}" 
+                                value="{{ value }}" 
+                                id="{{value}}" 
+                                {% if value in selected_disposal_times %} checked {% endif %}
+                                hidden>
                             <span class="time-label">{{ label }}</span>
                         </label>
                     {% endfor %}
