@@ -3,6 +3,75 @@
 {% load static %}
 
 {% block content %}
+
+<style>
+    .popup-overlay {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-modal {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    text-align: left;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    font-family: sans-serif;
+}
+
+.popup-modal h2 {
+    margin-top: 0;
+}
+
+.popup-modal button {
+    margin-top: 20px;
+    background-color: #d65555;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.popup-modal button:hover {
+    background-color: #e44444
+}
+
+#warning-button {
+    background-color: #faf189;
+    color: black;
+}
+
+#warning-button:hover {
+    background-color: #ffeb00;
+}
+</style>
+
+<div id="warning-notification" class="popup-overlay" style="display: none;">
+    <div class="popup-modal">
+        <h2>Warning!</h2>
+        <div id="warning-mesage"></div>
+        <button id="warning-button" onclick="closeWarningPopup()">Got it!</button>
+    </div>
+</div>
+
+<div id="error-notification" class="popup-overlay" style="display: none;">
+    <div class="popup-modal">
+        <h2>Error! Cannot dispense pill</h2>
+        <div id="error-mesage"></div>
+        <button onclick="closeErrorPopup()">Got it!</button>
+    </div>
+</div>
+
 <div class="dispense-container">
     <h2 class="page-title">Pill to Dispense</h2>
     <span id="pill_name">{{ name_of_pill }}</span>
@@ -71,6 +140,16 @@
     });
 
     updatePillDisplay();
+
+
+    function closeWarningPopup() {
+        document.getElementById('warning-notification').style.display = 'none';
+    }
+
+    function closeErrorPopup() {
+        document.getElementById('error-notification').style.display = 'none';
+    }
+    
 </script>
 
 {% endblock %}

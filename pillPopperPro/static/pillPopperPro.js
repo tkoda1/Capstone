@@ -25,19 +25,8 @@ function connect_to_server() {
         console.log(response);
         // FIX THIS
     }
-
-    // CODE THAT USES MQTT
-    // document.getElementById("dispense-btn").addEventListener("click", function() {
-    //     socket.send(JSON.stringify({ command: "DISPENSE" }));
-    // });
-    
-    // socket.onmessage = function(event) {
-    //     const data = JSON.parse(event.data);
-    //     alert(data.message);  
-    // };
 }
 
-// function dispense_pill(pill)
 async function dispense_pill() {
     console.log("Called dispense_pill function");
     const pillImageElement = document.getElementById("id_pill_picture");
@@ -63,18 +52,23 @@ async function dispense_pill() {
             body: JSON.stringify({ slot: pillSlot })
         })
 
+        const dispense_data = await dispense_response.json();
+
         if (!dispense_response.ok){
-            if (response.status === 400) {
-                alert("No more pills to dispense");
+            if (dispense_response.status === 400) {
+                const notification = document.getElementById("error-notification");
+                notification.style.display = "flex";
+                document.getElementById("error-mesage").innerText = dispense_data.error;
                 throw new Error("No pills remaining");
             }
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         
-        const dispense_data = await dispense_response.json();
 
         if (!dispense_data.success) {
-            alert(dispense_data.error || "Error dispensing pill.");
+            const notification = document.getElementById("error-notification");
+            notification.style.display = "flex";
+            document.getElementById("error-mesage").innerText = dispense_data.error || "Error dispensing pill.";
             throw new Error(`Error: ${dispense_data.error} | Error dispensing pill`)
         }
 
@@ -82,8 +76,11 @@ async function dispense_pill() {
         let ws_message = { action: "release", slot: pillSlot, angle: slot_angle };
         socket.send(JSON.stringify(ws_message));
 
+        console.log(dispense_data);
         if (dispense_data.refill_warning) {
-            alert("Warning: Only 3 pills remaining! Refill your machine soon.");
+            const notification = document.getElementById("warning-notification");
+            notification.style.display = "flex";
+            document.getElementById("warning-mesage").innerText = "Warning: Only 3 pills remaining! Refill your machine soon.";
         }
 
        const update_response = await fetch("/update_taken_times/", {

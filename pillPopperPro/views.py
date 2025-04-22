@@ -215,7 +215,7 @@ def dispense(request):
                 print(pill)
 
  
-                refill_warning = pill.quantity_remaining == 3
+                refill_warning = pill.quantity_remaining <= 3
                 # print(pill.quantity_remaining)
 
                 return JsonResponse({
@@ -227,7 +227,7 @@ def dispense(request):
                 })
                 
             else:
-                return JsonResponse({"success": False, "no_pills": True}, status=400)
+                return JsonResponse({"success": False, "error": "This compartment is empty, please refill with more pills", "no_pills": True}, status=400)
 
         except Pill.DoesNotExist:
             return JsonResponse({"success": False, "error": "Pill not found"}, status=404)
