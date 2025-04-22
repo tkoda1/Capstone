@@ -44,15 +44,15 @@ def reset_taken_today():
             print(caretakers)
             user_subject = 'Alert: failure to take medication'
             user_body = f"""Hello {user.get_full_name()},\n
-                    You have not taken the following medications
-                    on {date.today()}: {', '.join(pills_not_taken)}"""
+                    You have not taken the following medications on {date.today()}: {', '.join(pills_not_taken)}\n
+                    PillPopperPro Team"""
             user_email = user.email
             send_email(user_subject, user_body, user_email)
             caretaker_subject = 'Alert: patient failure to take medication'
             for caretaker in caretakers:
                 print(caretaker)
-                # caretaker_body = f"""Hello {caretaker.get_full_name()},\n
-                #     You have not taken the following medications
-                #     on {date.today()}: {', '.join(pills_not_taken)}"""
-                # caretaker_email = caretaker.email
-                # send_email(caretaker_subject, caretaker_body, caretaker_email)
+                caretaker_body = f"""Hello {caretaker.get_full_name()},\n
+                    You have not taken the following medications on {date.today()}: {', '.join(pills_not_taken)}\n
+                    PillPopperPro Team"""
+                caretaker_email = caretaker.email
+                send_email(caretaker_subject, caretaker_body, caretaker_email)

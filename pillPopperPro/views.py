@@ -28,6 +28,7 @@ from django.contrib.auth.models import User
 
 from .forms import PillForm
 from .models import Pill, UserProfile
+from .email import send_email, get_new_pill_email_body
 
 
 # Every time the dispense button is clicked the time is calculated and added to a list
@@ -376,6 +377,12 @@ def new_pill_form(request, slot_id):
 
             service.events().insert(calendarId='primary', body=event).execute()
 
+
+    #send email to user when they create a pill
+    email = request.user.email
+    body = get_new_pill_email_body(new_pill)
+    subject = 'New Pill Created on PillPopperPro'
+    send_email(subject, body, email)
 
     #name = 'pill_name' +  str(context['id'])
     #context[name] = form.cleaned_data['name']

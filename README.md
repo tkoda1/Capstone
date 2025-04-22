@@ -69,3 +69,7 @@ https://chatgpt.com/share/67ffce38-9dc0-8000-a0b8-61a6333579a3
 https://chatgpt.com/share/68017db6-67ec-8000-8387-6703e2a43a70
 
 https://chatgpt.com/share/68067f03-8dd0-8000-8b6d-2d6bd97b5eca
+
+https://docs.python.org/3/library/textwrap.html
+
+https://chatgpt.com/share/6806f1b4-edf0-8000-8e02-cc89a067a968
