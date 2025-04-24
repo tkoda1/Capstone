@@ -2,31 +2,40 @@
 
 import time
 from hx711 import HX711
-import lgpio as GPIO
 
-DT_PIN = 5
-SCK_PIN = 6
-GPIO.setmode(GPIO.BCM) 
-hx = HX711(DT_PIN, SCK_PIN)
+# Set GPIO pins (BCM numbering)
+DT_PIN = 5    # Data pin from HX711
+SCK_PIN = 6   # Clock pin to HX711
+
+# Create HX711 object
+hx = HX711(dout=DT_PIN, pd_sck=SCK_PIN)
+
+# Optional: adjust this depending on your load cell and wiring
+hx.set_reading_format("MSB", "MSB")
+
+# Reset and zero the scale
 hx.reset()
-hx.zero()
+hx.tare()
 
-print("Reading raw-ish value (averaged):")
-print(hx.get_raw_data_mean())
+print("Taring complete. Place weight on the scale.")
 
 readings = []
 
-print("Now reading weight:")
 try:
     while True:
-        weight = hx.get_weight_mean(5)
+        weight = hx.get_weight(5)  # average over 5 readings
         readings.append(weight)
+
         if len(readings) > 10:
             readings.pop(0)
-        average_weight = sum(readings) / len(readings)
-        print(f"Weight: {average_weight:.2f} units")
+
+        avg_weight = sum(readings) / len(readings)
+        print(f"Smoothed Weight: {avg_weight:.2f} units")
         time.sleep(0.5)
+
 except KeyboardInterrupt:
-    print("Exiting...")
+    print("\nExiting...")
+
+finally:
     hx.power_down()
-    hx.cleanup()
+    hx.power_up()
